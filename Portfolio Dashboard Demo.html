@@ -1,0 +1,1601 @@
+﻿<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Tracker Demo</title>
+  <style>
+:root {
+  --bg: #1b1b1b;
+  --bg-soft: #232035;
+  --panel: #1f1f1f;
+  --panel-alt: #272A80;
+  --line: #572780;
+  --text: #f4f5fb;
+  --muted: #9fb0c4;
+  --heading: #f8fafc;
+  --accent: #57DCBE;
+  --positive: #60C689;
+  --negative: #E91E63;
+  --chip: rgba(39, 104, 176, 0.18);
+  --shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+  --surface-gradient: linear-gradient(180deg, rgba(31, 31, 31, 0.98), rgba(35, 32, 53, 0.98));
+  --body-gradient:
+    radial-gradient(circle at top left, rgba(233, 30, 99, 0.12), transparent 28%),
+    linear-gradient(180deg, #1b1b1b 0%, #232035 100%);
+  --shortcut-bg: rgba(87, 42, 128, 0.18);
+  --table-hover: rgba(87, 172, 220, 0.08);
+  --tooltip-bg: rgba(10, 18, 30, 0.96);
+  --snapshot-quarter-bg: rgba(87, 42, 128, 0.26);
+  --sticky-head-bg: rgba(39, 104, 176, 0.18);
+  --input-bg: #121d2c;
+  --input-readonly-bg: #1a2637;
+  --eyebrow: #57DCBE;
+  --chart-grid: rgba(87, 172, 220, 0.18);
+  --chart-axis-line: rgba(87, 172, 220, 0.32);
+  --chart-axis: #57ACDC;
+  --chart-heading: #f5f7fb;
+  --chart-ring: rgba(87, 42, 128, 0.2);
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-soft: #f7f7fb;
+  --panel: #ffffff;
+  --panel-alt: #f4f1fb;
+  --line: #272A80;
+  --text: #272A80;
+  --muted: #2768B0;
+  --heading: #1b1b1b;
+  --accent: #57DCBE;
+  --positive: #60C689;
+  --negative: #C2185B;
+  --chip: rgba(87, 172, 220, 0.14);
+  --shadow: 0 18px 36px rgba(18, 34, 59, 0.12);
+  --surface-gradient: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(247, 247, 251, 1));
+  --body-gradient:
+    radial-gradient(circle at top left, rgba(233, 30, 99, 0.08), transparent 24%),
+    linear-gradient(180deg, #ffffff 0%, #f7f7fb 100%);
+  --shortcut-bg: rgba(87, 172, 220, 0.1);
+  --table-hover: rgba(87, 172, 220, 0.08);
+  --tooltip-bg: rgba(20, 29, 43, 0.94);
+  --snapshot-quarter-bg: rgba(156, 39, 176, 0.08);
+  --sticky-head-bg: rgba(87, 172, 220, 0.12);
+  --input-bg: #ffffff;
+  --input-readonly-bg: rgba(87, 172, 220, 0.08);
+  --eyebrow: #2768B0;
+  --chart-grid: rgba(39, 104, 176, 0.18);
+  --chart-axis-line: rgba(39, 104, 176, 0.3);
+  --chart-axis: #272A80;
+  --chart-heading: #1b1b1b;
+  --chart-ring: rgba(39, 104, 176, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--text);
+  background: var(--body-gradient);
+  min-height: 100vh;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  width: min(1360px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 8px 0 36px;
+}
+
+.hero,
+.panel,
+.summary-card,
+.ath-card {
+  border: 1px solid var(--line);
+  background: var(--surface-gradient);
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  position: sticky;
+  top: 8px;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-radius: 14px;
+  padding: 10px 14px;
+  min-height: 56px;
+  backdrop-filter: blur(14px);
+}
+
+.eyebrow,
+.section-kicker,
+.summary-card .label,
+.ath-card .label,
+thead th {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.eyebrow,
+.section-kicker {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--eyebrow);
+}
+
+.hero-copy,
+.panel-header p,
+.table-caption,
+.form-feedback,
+.status-caption,
+.summary-card .sub,
+.ath-card .sub,
+.muted {
+  color: var(--muted);
+}
+
+.hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.hero-title {
+  color: var(--accent);
+  font-size: 0.94rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero-refresh-time {
+  margin: 0;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.hero-status {
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow: visible;
+}
+
+.hero-topline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: auto;
+  order: 3;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.hero-midline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: auto;
+  order: 4;
+  flex: 0 0 auto;
+}
+
+.section-shortcuts {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 6px;
+  width: auto;
+  margin-top: 0;
+  order: 2;
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-left: 10px;
+  border-left: 1px solid rgba(159, 176, 196, 0.18);
+  overflow: visible;
+}
+
+.shortcut-link {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--shortcut-bg);
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.shortcut-link:hover {
+  color: var(--heading);
+  border-color: #41638d;
+  background: color-mix(in srgb, var(--chip) 82%, white 18%);
+}
+
+html[data-theme="light"] .shortcut-link,
+html[data-theme="light"] .chip,
+html[data-theme="light"] .ghost-btn {
+  color: #27405f;
+}
+
+html[data-theme="light"] .shortcut-link:hover,
+html[data-theme="light"] .chip:hover,
+html[data-theme="light"] .ghost-btn:hover {
+  color: #102033;
+  border-color: #7e98ba;
+  background: #dce8f7;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--shortcut-bg);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+  font-size: 0.8rem;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.ghost-btn,
+.primary-btn,
+.delete-btn,
+.chip {
+  border: 1px solid var(--line);
+  cursor: pointer;
+}
+
+.ghost-btn {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.hero-refresh-btn {
+  min-width: 66px;
+  padding-inline: 10px;
+}
+
+.ghost-btn:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.workspace {
+  margin-top: 14px;
+}
+
+.workspace-tabs {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--shortcut-bg);
+  margin-bottom: 18px;
+}
+
+.hero .workspace-tabs {
+  margin-bottom: 0;
+  order: 1;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.workspace-tab {
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  text-transform: uppercase;
+  font-size: 0.71rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.workspace-tab.active {
+  color: var(--heading);
+  background: color-mix(in srgb, var(--chip) 82%, white 18%);
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line) 45%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] .workspace-tab.active,
+html[data-theme="light"] .chip.active {
+  background: #d7e5f6;
+  border-color: #8ca4c3;
+  color: #102033;
+}
+
+.workspace-pane[hidden] {
+  display: none;
+}
+
+.dashboard-section {
+  margin-bottom: 18px;
+}
+
+.summary-grid,
+.avg-dca-grid,
+.metric-strip,
+.ath-grid,
+.insight-grid,
+.operations-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.avg-dca-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metric-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.summary-card {
+  border-radius: 16px;
+  padding: 18px 20px;
+}
+
+.metric-card {
+  border-radius: 10px;
+  border: 1px solid #8e83b5;
+  background: linear-gradient(180deg, rgba(211, 204, 228, 0.94), rgba(188, 178, 214, 0.94));
+  color: #151321;
+  padding: 14px 16px;
+  min-height: 226px;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-theme="light"] .metric-card {
+  border-color: #9f8ec5;
+  background: linear-gradient(180deg, rgba(222, 213, 240, 0.98), rgba(200, 188, 226, 0.98));
+  box-shadow: 0 16px 28px rgba(92, 75, 138, 0.14);
+}
+
+.metric-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+  color: #413858;
+}
+
+.metric-value {
+  font-size: clamp(1.45rem, 2.8vw, 2rem);
+  line-height: 1.05;
+  font-weight: 800;
+  color: #12111a;
+  margin-top: 18px;
+}
+
+.metric-percent {
+  margin-top: 18px;
+  font-size: 1.15rem;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #12111a;
+}
+
+.metric-footer {
+  margin-top: auto;
+  border-top: 2px solid #5b506f;
+}
+
+.metric-footer-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(69, 60, 90, 0.45);
+  font-size: 0.78rem;
+  color: #413858;
+}
+
+.metric-footer-row strong {
+  color: #12111a;
+  font-size: 0.82rem;
+}
+
+.summary-card .label,
+.ath-card .label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.summary-card .value,
+.ath-card .value {
+  margin-top: 12px;
+  color: var(--heading);
+  font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.summary-card .sub,
+.ath-card .sub {
+  margin-top: 8px;
+  font-size: 0.96rem;
+}
+
+.summary-card.positive .value,
+.ath-card.positive .value,
+.pill.positive {
+  color: var(--positive);
+}
+
+.summary-card.negative .value,
+.ath-card.negative .value,
+.pill.negative {
+  color: var(--negative);
+}
+
+.panel {
+  border-radius: 18px;
+  padding: 20px 22px;
+}
+
+.panel-header {
+  margin-bottom: 14px;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.45rem;
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.panel-header p {
+  margin: 6px 0 0;
+  line-height: 1.45;
+}
+
+.insight-grid {
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+.ath-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ath-card {
+  border-radius: 14px;
+  padding: 16px 18px;
+  min-height: 126px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.subsection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.subsection-header h3 {
+  margin: 0;
+  color: var(--heading);
+  font-size: 1rem;
+}
+
+.subsection-toggle {
+  padding: 8px 12px;
+}
+
+.dca-history-panel[hidden] {
+  display: none;
+}
+
+.chip-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+}
+
+.chip.active {
+  background: #294667;
+  color: var(--heading);
+  border-color: #41638d;
+}
+
+.subsection-header h3,
+.legend-item strong,
+.legend-item span {
+  color: var(--heading);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 13px 12px;
+  border-bottom: 1px solid rgba(159, 176, 196, 0.14);
+  text-align: left;
+  white-space: nowrap;
+}
+
+thead th {
+  font-size: 0.76rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+tbody tr:hover {
+  background: var(--table-hover);
+}
+
+.asset-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.asset-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.compact {
+  margin-top: 3px;
+  font-size: 0.84rem;
+}
+
+.pill {
+  display: inline-block;
+  min-width: 68px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.positive-text {
+  color: var(--positive);
+}
+
+.negative-text {
+  color: var(--negative);
+}
+
+.chart {
+  min-height: 280px;
+}
+
+.chart-stack {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.chart-focus {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--shortcut-bg);
+}
+
+.chart-focus-compact {
+  margin-bottom: 10px;
+}
+
+.chart-focus-title {
+  color: var(--heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.chart-focus-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+}
+
+.chart-focus-item {
+  display: grid;
+  gap: 2px;
+}
+
+.chart-focus-item span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.chart-focus-item strong {
+  color: var(--heading);
+  font-size: 0.95rem;
+}
+
+.line-chart svg,
+.donut-wrap svg,
+.snapshot-chart svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 3;
+  min-width: 150px;
+  max-width: 220px;
+  padding: 10px 12px;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 10px;
+  background: var(--tooltip-bg);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font-size: 0.84rem;
+  line-height: 1.4;
+  pointer-events: none;
+}
+
+.donut-layout {
+  display: grid;
+  gap: 18px;
+}
+
+.donut-wrap {
+  width: min(100%, 420px);
+  margin: 0 auto;
+}
+
+.allocation-legend {
+  display: grid;
+  gap: 10px;
+}
+
+.allocation-stats {
+  margin-top: 14px;
+}
+
+.allocation-stats-grid,
+.market-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.allocation-stat,
+.market-note {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--shortcut-bg);
+}
+
+.allocation-stat span,
+.market-note span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.allocation-stat strong,
+.market-note strong {
+  color: var(--heading);
+  font-size: 1rem;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.legend-item strong {
+  color: var(--heading);
+}
+
+.operations-grid {
+  grid-template-columns: 0.95fr 1.05fr;
+}
+
+.transaction-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.transaction-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.transaction-form span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.transaction-form input,
+.transaction-form select {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+.transaction-form input[readonly] {
+  background: var(--input-readonly-bg);
+  color: var(--heading);
+}
+
+.quote-summary {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  background: var(--shortcut-bg);
+}
+
+.full-width,
+.primary-btn,
+.form-feedback {
+  grid-column: 1 / -1;
+}
+
+.primary-btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #2f7a69;
+  color: white;
+}
+
+.quick-entry-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.quick-entry-btn {
+  grid-column: auto;
+  min-width: 180px;
+}
+
+.delete-btn {
+  padding: 8px 11px;
+  border-radius: 10px;
+  background: rgba(255, 138, 76, 0.12);
+  color: #ffb38b;
+}
+
+.table-caption,
+.status-caption,
+.form-feedback {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+}
+
+.hero-midline .status-caption {
+  margin: 0;
+}
+
+.snapshot-table-wrap {
+  border-radius: 14px;
+}
+
+.snapshot-visuals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.snapshot-visual-card {
+  position: relative;
+  padding: 16px;
+  border: 1px solid rgba(159, 176, 196, 0.14);
+  border-radius: 14px;
+  background: var(--shortcut-bg);
+}
+
+.snapshot-visual-card h3 {
+  margin: 0;
+  color: var(--heading);
+  font-size: 1rem;
+}
+
+.snapshot-visual-card p {
+  margin: 6px 0 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.snapshot-chart {
+  min-height: 240px;
+}
+
+.snapshot-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.snapshot-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.snapshot-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--sticky-head-bg);
+  z-index: 1;
+}
+
+.quarter-row td {
+  padding: 10px 12px;
+  background: var(--snapshot-quarter-bg);
+  color: var(--heading);
+  font-weight: 700;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.preview-row td {
+  background: rgba(70, 194, 161, 0.06);
+}
+
+.transaction-modal {
+  width: min(760px, calc(100% - 24px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.transaction-modal::backdrop {
+  background: rgba(4, 10, 18, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.modal-backdrop {
+  display: none;
+}
+
+.modal-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-gradient);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  padding: 20px 22px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 54px;
+  height: 28px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--chip) 84%, white 16%), color-mix(in srgb, var(--panel) 88%, black 12%));
+  box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.08), 0 10px 22px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+}
+
+.theme-option {
+  position: relative;
+  z-index: 2;
+  width: 12px;
+  text-align: center;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f6b455, #e89a11);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.theme-toggle[data-theme="dark"] .theme-toggle-thumb {
+  transform: translateX(26px);
+  background: linear-gradient(180deg, #6b7385, #40495d);
+}
+
+.theme-toggle[data-theme="light"] .theme-option-sun,
+.theme-toggle[data-theme="dark"] .theme-option-moon {
+  color: #ffffff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.brief-summary {
+  margin-top: 16px;
+}
+
+.brief-featured {
+  margin-top: 16px;
+}
+
+.brief-featured-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.brief-featured-link {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--shortcut-bg);
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.brief-featured-link:hover {
+  border-color: #6d86a8;
+  transform: translateY(-1px);
+}
+
+.brief-featured-rank {
+  color: var(--muted);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.brief-summary-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: var(--shortcut-bg);
+}
+
+.brief-summary-card p {
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+
+.brief-momentum-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.brief-value {
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+}
+
+.brief-headlines {
+  margin-top: 16px;
+}
+
+.brief-headlines-list {
+  display: grid;
+  gap: 14px;
+}
+
+.brief-headline-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: var(--shortcut-bg);
+}
+
+.brief-headline-time {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.brief-headline-card h3 {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.brief-headline-card a {
+  color: var(--heading);
+  text-decoration: none;
+}
+
+.brief-headline-card a:hover {
+  text-decoration: underline;
+}
+
+.brief-headline-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 1120px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metric-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .insight-grid,
+  .operations-grid,
+  .snapshot-visuals,
+  .brief-momentum-grid,
+  .brief-featured-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ath-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .allocation-stats-grid,
+  .market-notes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .hero-status {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .section-shortcuts {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: min(100% - 20px, 1360px);
+    padding-top: 16px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    top: 0;
+  }
+
+  .hero-status {
+    min-width: 0;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .hero-topline,
+  .hero-midline,
+  .section-shortcuts {
+    justify-content: flex-start;
+  }
+
+  .modal-header,
+  .quick-entry-row,
+  .subsection-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .summary-grid,
+  .avg-dca-grid,
+  .metric-strip,
+  .ath-grid,
+  .transaction-form,
+  .chart-focus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace-tabs {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .hero .workspace-tabs {
+    width: 100%;
+  }
+
+  .section-shortcuts {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .panel,
+  .summary-card,
+  .ath-card {
+    padding: 16px;
+  }
+}
+
+  .workspace-pane[hidden] { display: none !important; }
+  .demo-static { display: grid; gap: 18px; }
+  .demo-chart-svg text { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+  .demo-note { margin-top: 10px; color: var(--muted); font-size: 0.9rem; }
+  .demo-spacer { height: 4px; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-brand">
+        <span class="hero-title">Portfolio</span>
+        <span id="last-updated" class="sr-only hero-refresh-time">Demo</span>
+      </div>
+      <div class="hero-status">
+        <section class="workspace-tabs hero-workspace-tabs" aria-label="Workspace views">
+          <button class="workspace-tab active" type="button">Dashboard</button>
+          <button class="workspace-tab" type="button">Snapshots</button>
+          <button class="workspace-tab" type="button">Daily Brief</button>
+        </section>
+        <div class="hero-topline">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>Demo prices active</span>
+          </div>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme">
+            <span class="theme-option theme-option-sun" aria-hidden="true">☀</span>
+            <span class="theme-option theme-option-moon" aria-hidden="true">☾</span>
+            <span id="theme-toggle-thumb" class="theme-toggle-thumb" aria-hidden="true"></span>
+            <span id="theme-toggle-label" class="sr-only">Dark mode</span>
+          </button>
+        </div>
+        <div class="hero-midline">
+          <button class="ghost-btn hero-refresh-btn" type="button">Refresh</button>
+        </div>
+        <nav class="section-shortcuts" aria-label="Section shortcuts">
+          <a href="#quick-entry-section" class="shortcut-link">Entry</a>
+          <a href="#holdings-section" class="shortcut-link">Holdings</a>
+          <a href="#dca-section" class="shortcut-link">DCA</a>
+          <a href="#ledger-section" class="shortcut-link">Ledger</a>
+          <a href="#snapshots-section" class="shortcut-link">Snapshots</a>
+          <a href="#brief-section" class="shortcut-link">Brief</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="workspace demo-static">
+      <section id="quick-entry-section" class="dashboard-section">
+        <div class="section-kicker">Quick Entry</div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Add Transaction</h2>
+            <p>Standalone demo view using fictional values based on the real dashboard layout.</p>
+          </div>
+          <div class="quick-entry-row">
+            <button type="button" class="primary-btn quick-entry-btn">Add transaction</button>
+            <p class="form-feedback">Demo mode only. No live data is stored.</p>
+          </div>
+        </section>
+      </section>
+
+      <section id="overview-section" class="dashboard-section">
+        <div class="section-kicker">Portfolio Overview</div>
+        <div class="summary-grid">
+          <article class="summary-card">
+            <div class="label">Total Value (EUR)</div>
+            <div class="value">€96,420.00</div>
+            <div class="sub">+16.84% overall</div>
+          </article>
+          <article class="summary-card">
+            <div class="label">Total Invested (EUR)</div>
+            <div class="value">€82,520.00</div>
+            <div class="sub">Base portfolio capital</div>
+          </article>
+          <article class="summary-card positive">
+            <div class="label">Net Gain (EUR)</div>
+            <div class="value">+€13,900.00</div>
+            <div class="sub">Current value minus invested capital</div>
+          </article>
+          <article class="summary-card">
+            <div class="label">Total Fees Paid</div>
+            <div class="value">€214.00</div>
+            <div class="sub">84 BTC DCA deposits</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="monthly-change-section" class="dashboard-section">
+        <div class="section-kicker">What Changed</div>
+        <div class="summary-grid">
+          <article class="summary-card positive"><div class="label">Portfolio Total</div><div class="value">+€2,460.00</div><div class="sub">vs April: €93,960.00</div></article>
+          <article class="summary-card positive"><div class="label">Bitcoin</div><div class="value">+€1,820.00</div><div class="sub">+5.24% month over month</div></article>
+          <article class="summary-card positive"><div class="label">S&amp;P 500</div><div class="value">+€410.00</div><div class="sub">+3.11% month over month</div></article>
+          <article class="summary-card positive"><div class="label">Savings</div><div class="value">+€230.00</div><div class="sub">+0.78% month over month</div></article>
+        </div>
+      </section>
+
+      <section id="metrics-section" class="dashboard-section">
+        <div class="section-kicker">Key Metrics</div>
+        <div class="metric-strip">
+          <article class="metric-card"><div class="metric-label">Total Invested EUR</div><div class="metric-value">€82,520.00</div><div class="metric-percent">+16.84%</div><div class="metric-footer"><div class="metric-footer-row"><span>Current Value</span><strong>€96,420.00</strong></div><div class="metric-footer-row"><span>Net Position</span><strong>+€13,900.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">Total Net Position EUR</div><div class="metric-value">€96,420.00</div><div class="metric-percent">+16.84%</div><div class="metric-footer"><div class="metric-footer-row"><span>Total Invested (EUR)</span><strong>€82,520.00</strong></div><div class="metric-footer-row"><span>Current Value</span><strong>€96,420.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">Crypto Net Position EUR</div><div class="metric-value">+€10,640.00</div><div class="metric-percent">+24.31%</div><div class="metric-footer"><div class="metric-footer-row"><span>Total Invested (EUR) CR</span><strong>€43,760.00</strong></div><div class="metric-footer-row"><span>Current Value (Crypto)</span><strong>€54,400.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">Crypto Net Position USD</div><div class="metric-value">+,540.00</div><div class="metric-percent">+24.31%</div><div class="metric-footer"><div class="metric-footer-row"><span>Total Invested (USD) CR</span><strong>,460.00</strong></div><div class="metric-footer-row"><span>Total Value (Crypto)</span><strong>,000.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">S&amp;P 500</div><div class="metric-value">+€2,180.00</div><div class="metric-percent">+17.44%</div><div class="metric-footer"><div class="metric-footer-row"><span>Total Invested EUR</span><strong>€12,500.00</strong></div><div class="metric-footer-row"><span>Current Price EUR</span><strong>€14,680.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">Savings EUR</div><div class="metric-value">+€1,080.00</div><div class="metric-percent">+3.60%</div><div class="metric-footer"><div class="metric-footer-row"><span>Total Invested Savings EUR</span><strong>€30,000.00</strong></div><div class="metric-footer-row"><span>Current Price EUR</span><strong>€31,080.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">BTC ATH Gap</div><div class="metric-value">,420.00</div><div class="metric-percent">-17.57%</div><div class="metric-footer"><div class="metric-footer-row"><span>Current Price</span><strong>,420.00</strong></div><div class="metric-footer-row"><span>ATH Price</span><strong>,840.00</strong></div><div class="metric-footer-row"><span>Current Value</span><strong>,980.00</strong></div><div class="metric-footer-row"><span>ATH Value</span><strong>,920.00</strong></div></div></article>
+          <article class="metric-card"><div class="metric-label">S&amp;P (VUAA) ATH Gap</div><div class="metric-value">€3.80</div><div class="metric-percent">-2.51%</div><div class="metric-footer"><div class="metric-footer-row"><span>Current Price</span><strong>€147.80</strong></div><div class="metric-footer-row"><span>ATH Price</span><strong>€151.60</strong></div><div class="metric-footer-row"><span>Current Value</span><strong>€14,680.00</strong></div><div class="metric-footer-row"><span>ATH Value</span><strong>€15,058.00</strong></div></div></article>
+        </div>
+      </section>
+
+      <section id="average-dca-section" class="dashboard-section">
+        <div class="section-kicker">Average DCA Prices</div>
+        <div class="avg-dca-grid">
+          <article class="summary-card"><div class="label">Bitcoin Avg Buy</div><div class="value">,580.00</div><div class="sub">0.4856 BTC held</div></article>
+          <article class="summary-card"><div class="label">S&amp;P Avg Buy</div><div class="value">.20</div><div class="sub">99.32 shares held</div></article>
+        </div>
+      </section>
+
+      <section id="holdings-section" class="dashboard-section">
+        <div class="section-kicker">Holdings</div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Current Positions</h2>
+            <p>Identical dashboard structure, but all asset values below are fictional.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Currency</th><th>Amount</th><th>Total Value USD</th><th>Total Value BGN</th><th>Total Value EUR</th><th>% Of All</th><th>1 Coin Price USD</th><th>1 Coin Price EUR</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><div class="asset-cell"><span class="asset-dot" style="background:#E91E63"></span><span>BTC</span></div></td><td>0.48560000</td><td>,980.00</td><td>71,725.28 BGN</td><td>€36,672.00</td><td>38.03%</td><td>,420.00</td><td>€75,520.00</td></tr>
+                <tr><td><div class="asset-cell"><span class="asset-dot" style="background:#57DCBE"></span><span>Savings</span></div></td><td>31,080.00</td><td>,562.00</td><td>60,789.18 BGN</td><td>€31,080.00</td><td>32.23%</td><td>.14</td><td>€1.00</td></tr>
+                <tr><td><div class="asset-cell"><span class="asset-dot" style="background:#572780"></span><span>S&amp;P 500</span></div></td><td>99.32</td><td>,875.20</td><td>28,713.56 BGN</td><td>€14,680.00</td><td>15.22%</td><td>.91</td><td>€147.80</td></tr>
+                <tr><td><div class="asset-cell"><span class="asset-dot" style="background:#C2185B"></span><span>ETH</span></div></td><td>7.40000000</td><td>,020.00</td><td>28,868.58 BGN</td><td>€14,760.00</td><td>15.31%</td><td>,300.00</td><td>€1,994.59</td></tr>
+                <tr><td><div class="asset-cell"><span class="asset-dot" style="background:#57ACDC"></span><span>USD</span></div></td><td>1.00<div class="muted compact">USD/EUR tracker</div></td><td>.00</td><td>1.72 BGN</td><td>€0.88</td><td></td><td>.00</td><td>€0.88</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="market-section" class="dashboard-section">
+        <div class="section-kicker">Market Snapshots</div>
+        <div class="insight-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Live Price Snapshot</h2>
+              <p>Fictional live market levels and distance from all-time highs.</p>
+            </div>
+            <div class="ath-grid">
+              <article class="ath-card"><div class="label">BTC Live Price</div><div class="value">,420.00</div><div class="sub">€75,520.00 live EUR</div></article>
+              <article class="ath-card negative"><div class="label">BTC From ATH</div><div class="value">-17.57%</div><div class="sub">ATH ,840.00</div></article>
+              <article class="ath-card"><div class="label">BTC Position Value</div><div class="value">€36,672.00</div><div class="sub">,980.00 live value</div></article>
+              <article class="ath-card"><div class="label">BTC Avg Buy</div><div class="value">€62,510.00</div><div class="sub">,580.00 avg entry</div></article>
+              <article class="ath-card"><div class="label">S&amp;P 500 Live Price</div><div class="value">.91</div><div class="sub">€147.80 live EUR</div></article>
+              <article class="ath-card negative"><div class="label">VUAA From ATH</div><div class="value">-2.51%</div><div class="sub">ATH .27 / €151.60</div></article>
+              <article class="ath-card"><div class="label">VUAA Position Value</div><div class="value">€14,680.00</div><div class="sub">,875.20 live value</div></article>
+              <article class="ath-card"><div class="label">USD / EUR</div><div class="value">€0.88</div><div class="sub">.00 tracker</div></article>
+            </div>
+            <div id="market-notes" class="market-notes">
+              <div class="market-notes-grid">
+                <article class="market-note"><span>BTC ATH</span><strong>,840.00</strong></article>
+                <article class="market-note"><span>VUAA ATH</span><strong>€151.60</strong></article>
+                <article class="market-note"><span>Crypto Share</span><strong>53.34%</strong></article>
+                <article class="market-note"><span>USD / EUR</span><strong>€0.88</strong></article>
+                <article class="market-note"><span>BTC + ETH Value</span><strong>€51,432.00</strong></article>
+                <article class="market-note"><span>VUAA Position</span><strong>€14,680.00</strong></article>
+                <article class="market-note"><span>Savings Balance</span><strong>€31,080.00</strong></article>
+                <article class="market-note"><span>Net Gain</span><strong>+€13,900.00</strong></article>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Portfolio Allocation</h2>
+              <p>Live value split across fictional demo holdings.</p>
+            </div>
+            <div class="donut-layout">
+              <div class="donut-wrap">
+                <svg viewBox="0 0 240 240" aria-label="Allocation chart">
+                  <circle cx="120" cy="120" r="84" fill="none" stroke="rgba(87,42,128,0.2)" stroke-width="24"></circle>
+                  <path d="M 120 36 A 84 84 0 0 1 198 87" stroke="#E91E63" stroke-width="24" fill="none"></path>
+                  <path d="M 198 87 A 84 84 0 0 1 174 184" stroke="#57DCBE" stroke-width="24" fill="none"></path>
+                  <path d="M 174 184 A 84 84 0 0 1 92 199" stroke="#572780" stroke-width="24" fill="none"></path>
+                  <path d="M 92 199 A 84 84 0 0 1 120 36" stroke="#C2185B" stroke-width="24" fill="none"></path>
+                  <text x="120" y="112" text-anchor="middle" font-size="12" fill="#57ACDC">Total</text>
+                  <text x="120" y="136" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor">€96,420.00</text>
+                </svg>
+              </div>
+              <div class="allocation-legend">
+                <div class="legend-item"><span class="asset-dot" style="background:#E91E63"></span><span>Bitcoin</span><strong>38.03%</strong></div>
+                <div class="legend-item"><span class="asset-dot" style="background:#57DCBE"></span><span>Savings</span><strong>32.23%</strong></div>
+                <div class="legend-item"><span class="asset-dot" style="background:#572780"></span><span>S&amp;P 500 (VUAA)</span><strong>15.22%</strong></div>
+                <div class="legend-item"><span class="asset-dot" style="background:#C2185B"></span><span>Ethereum</span><strong>15.31%</strong></div>
+              </div>
+            </div>
+            <div class="allocation-stats">
+              <div class="allocation-stats-grid">
+                <div class="allocation-stat"><span>Bitcoin + ETH</span><strong>€51,432.00</strong></div>
+                <div class="allocation-stat"><span>Savings</span><strong>€31,080.00</strong></div>
+                <div class="allocation-stat"><span>S&amp;P 500</span><strong>€14,680.00</strong></div>
+                <div class="allocation-stat"><span>Net Gain</span><strong>+€13,900.00</strong></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="dca-section" class="dashboard-section">
+        <div class="section-kicker">DCA History</div>
+        <section class="panel">
+          <div class="toolbar">
+            <div class="chip-row">
+              <button class="chip active" type="button">BTC</button>
+              <button class="chip" type="button">S&amp;P 500</button>
+              <button class="chip" type="button">All</button>
+            </div>
+            <div class="chip-row">
+              <button class="chip active" type="button">Cumulative</button>
+              <button class="chip" type="button">Monthly Deposits</button>
+            </div>
+          </div>
+          <div class="chart-stack">
+            <div class="chart-focus">
+              <div class="chart-focus-title">Latest 2026-05-12</div>
+              <div class="chart-focus-grid">
+                <div class="chart-focus-item"><span>Accumulated</span><strong>0.48560000 BTC</strong></div>
+                <div class="chart-focus-item"><span>Latest Buy</span><strong>0.01240000 BTC</strong></div>
+                <div class="chart-focus-item"><span>Current Value</span><strong>€36,672.00</strong></div>
+                <div class="chart-focus-item"><span>Deposit</span><strong>€1,240.00</strong></div>
+              </div>
+            </div>
+            <div class="chart line-chart">
+              <svg class="demo-chart-svg" viewBox="0 0 960 320" preserveAspectRatio="none" aria-label="DCA cumulative chart">
+                <line x1="62" y1="20" x2="62" y2="278" stroke="rgba(87,172,220,0.32)" />
+                <line x1="62" y1="278" x2="940" y2="278" stroke="rgba(87,172,220,0.32)" />
+                <line x1="62" y1="226" x2="940" y2="226" stroke="rgba(87,172,220,0.18)" /><text x="52" y="230" text-anchor="end" font-size="10" fill="#57ACDC">0.1</text>
+                <line x1="62" y1="174" x2="940" y2="174" stroke="rgba(87,172,220,0.18)" /><text x="52" y="178" text-anchor="end" font-size="10" fill="#57ACDC">0.2</text>
+                <line x1="62" y1="122" x2="940" y2="122" stroke="rgba(87,172,220,0.18)" /><text x="52" y="126" text-anchor="end" font-size="10" fill="#57ACDC">0.3</text>
+                <line x1="62" y1="70" x2="940" y2="70" stroke="rgba(87,172,220,0.18)" /><text x="52" y="74" text-anchor="end" font-size="10" fill="#57ACDC">0.4</text>
+                <polyline points="62,270 172,248 282,214 392,174 502,132 612,108 722,86 832,58 940,34" fill="none" stroke="#E91E63" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+                <g fill="#f4f5fb">
+                  <circle cx="62" cy="270" r="3"></circle><text x="62" y="260" text-anchor="middle" font-size="8" fill="#E91E63">0.03</text>
+                  <circle cx="172" cy="248" r="3"></circle><text x="172" y="238" text-anchor="middle" font-size="8" fill="#E91E63">0.08</text>
+                  <circle cx="282" cy="214" r="3"></circle><text x="282" y="204" text-anchor="middle" font-size="8" fill="#E91E63">0.14</text>
+                  <circle cx="392" cy="174" r="3"></circle><text x="392" y="164" text-anchor="middle" font-size="8" fill="#E91E63">0.21</text>
+                  <circle cx="502" cy="132" r="3"></circle><text x="502" y="122" text-anchor="middle" font-size="8" fill="#E91E63">0.29</text>
+                  <circle cx="612" cy="108" r="3"></circle><text x="612" y="98" text-anchor="middle" font-size="8" fill="#E91E63">0.34</text>
+                  <circle cx="722" cy="86" r="3"></circle><text x="722" y="76" text-anchor="middle" font-size="8" fill="#E91E63">0.39</text>
+                  <circle cx="832" cy="58" r="3"></circle><text x="832" y="48" text-anchor="middle" font-size="8" fill="#E91E63">0.45</text>
+                  <circle cx="940" cy="34" r="3"></circle><text x="940" y="24" text-anchor="middle" font-size="8" fill="#E91E63">0.49</text>
+                </g>
+                <text x="62" y="300" text-anchor="middle" font-size="10" fill="#57ACDC">24-01</text>
+                <text x="282" y="300" text-anchor="middle" font-size="10" fill="#57ACDC">24-09</text>
+                <text x="502" y="300" text-anchor="middle" font-size="10" fill="#57ACDC">25-05</text>
+                <text x="722" y="300" text-anchor="middle" font-size="10" fill="#57ACDC">25-11</text>
+                <text x="940" y="300" text-anchor="middle" font-size="10" fill="#57ACDC">26-05</text>
+              </svg>
+            </div>
+            <p class="table-caption">Cumulative Bitcoin units in demo mode. Monthly Deposits stays available as the cash view in the real app.</p>
+          </div>
+        </section>
+      </section>
+
+      <section id="ledger-section" class="dashboard-section">
+        <div class="section-kicker">Position Ledger</div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Transaction History</h2>
+            <p>Example fictional transactions matching the current dashboard structure.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Asset</th><th>Qty</th><th>Total</th><th>Note</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>2026-05-12</td><td>BTC</td><td>0.01240000</td><td>€1,240.00</td><td class="muted">Monthly BTC DCA</td><td><button class="delete-btn">Delete</button></td></tr>
+                <tr><td>2026-05-06</td><td>SAVINGS</td><td>500.00000000</td><td>€500.00</td><td class="muted">Savings top-up</td><td><button class="delete-btn">Delete</button></td></tr>
+                <tr><td>2026-04-28</td><td>VUAA</td><td>3.20000000</td><td>€470.00</td><td class="muted">Index accumulation</td><td><button class="delete-btn">Delete</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section id="snapshots-section" class="dashboard-section">
+        <div class="section-kicker">Monthly Snapshots</div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Month-End Portfolio Ledger</h2>
+            <p>Same table concept as the app, filled with safe fictional values.</p>
+          </div>
+          <div class="table-wrap snapshot-table-wrap">
+            <table class="snapshot-table">
+              <thead>
+                <tr><th>Month</th><th>Bitcoin</th><th>S&amp;P 500</th><th>Savings</th><th>Invested</th><th>Total</th><th>Amount Diff</th><th>MoM Total</th><th>MoM BTC</th><th>MoM S&amp;P</th><th>MoM Savings</th><th>BTC %</th><th>S&amp;P %</th><th>Savings %</th></tr>
+              </thead>
+              <tbody>
+                <tr class="quarter-row"><td colspan="14">Q1 2026</td></tr>
+                <tr><td>January</td><td>€30,280.00</td><td>€11,920.00</td><td>€28,440.00</td><td>€2,600.00</td><td>€70,640.00</td><td>+€1,920.00</td><td class="positive-text">+2.79%</td><td class="positive-text">+4.20%</td><td class="positive-text">+1.60%</td><td class="positive-text">+0.50%</td><td>42.86%</td><td>16.87%</td><td>40.26%</td></tr>
+                <tr><td>February</td><td>€32,840.00</td><td>€12,380.00</td><td>€29,120.00</td><td>€2,900.00</td><td>€74,340.00</td><td>+€3,700.00</td><td class="positive-text">+5.24%</td><td class="positive-text">+8.45%</td><td class="positive-text">+3.86%</td><td class="positive-text">+2.39%</td><td>44.17%</td><td>16.65%</td><td>39.17%</td></tr>
+                <tr><td>March</td><td>€34,850.00</td><td>€13,060.00</td><td>€30,410.00</td><td>€3,100.00</td><td>€78,320.00</td><td>+€3,980.00</td><td class="positive-text">+5.35%</td><td class="positive-text">+6.12%</td><td class="positive-text">+5.49%</td><td class="positive-text">+4.43%</td><td>44.50%</td><td>16.68%</td><td>38.83%</td></tr>
+                <tr class="quarter-row"><td colspan="14">Q2 2026</td></tr>
+                <tr class="preview-row"><td>April</td><td>€36,672.00</td><td>€14,680.00</td><td>€31,080.00</td><td>€3,600.00</td><td>€82,432.00</td><td>+€4,112.00</td><td class="positive-text">+5.25%</td><td class="positive-text">+5.23%</td><td class="positive-text">+12.40%</td><td class="positive-text">+2.20%</td><td>44.49%</td><td>17.81%</td><td>37.70%</td></tr>
+                <tr><td>May</td><td>€38,540.00</td><td>€15,040.00</td><td>€31,680.00</td><td>€4,100.00</td><td>€85,260.00</td><td>+€2,828.00</td><td class="positive-text">+3.43%</td><td class="positive-text">+5.10%</td><td class="positive-text">+2.45%</td><td class="positive-text">+1.93%</td><td>45.20%</td><td>17.64%</td><td>37.15%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-caption">Fictional ledger built to mirror the real app structure for sharing/demo use.</p>
+        </section>
+      </section>
+
+      <section id="brief-section" class="dashboard-section">
+        <div class="section-kicker">Daily Brief</div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Bitcoin Daily Brief</h2>
+            <p>Demo-only headlines and summary, matching the layout of the live brief tab.</p>
+          </div>
+          <div class="table-caption">Source: Demo headlines. Generated for friend-sharing preview.</div>
+          <div class="brief-featured">
+            <div class="brief-featured-grid">
+              <a class="brief-featured-link" href="#"><span class="brief-featured-rank">Top 1</span><strong>Institutional demand accelerates across fictional spot products</strong></a>
+              <a class="brief-featured-link" href="#"><span class="brief-featured-rank">Top 2</span><strong>Macro calm helps risk appetite improve in demo market narrative</strong></a>
+              <a class="brief-featured-link" href="#"><span class="brief-featured-rank">Top 3</span><strong>Network activity rises while exchange balances remain stable</strong></a>
+            </div>
+          </div>
+          <div class="brief-summary">
+            <article class="brief-summary-card">
+              <div class="label">Most Important In 24h</div>
+              <p><strong>Institutional demand accelerates across fictional spot products.</strong></p>
+              <p>Demo summary: the past 24 hours were dominated by strong demand narratives, steadier macro conditions, and a constructive technical setup. Together they support a positive short-term read without implying a guarantee of price direction.</p>
+              <p class="muted">Momentum is constructive in this fictional example, so short-term direction reads mildly bullish.</p>
+            </article>
+          </div>
+          <div class="brief-momentum-grid">
+            <article class="summary-card"><div class="label">BTC Price</div><div class="value brief-value">,420.00</div><div class="sub">+2.45% in 24h</div></article>
+            <article class="summary-card"><div class="label">7 Day Move</div><div class="value brief-value">+6.80%</div><div class="sub">17.57% from ATH</div></article>
+            <article class="summary-card positive"><div class="label">Momentum Bias</div><div class="value brief-value">BULLISH</div><div class="sub">Higher lows, positive flow, and steady narrative support.</div></article>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeLabel = document.getElementById('theme-toggle-label');
+    themeToggle.dataset.theme = 'dark';
+    themeToggle.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      themeToggle.dataset.theme = next;
+      themeLabel.textContent = next === 'dark' ? 'Dark mode' : 'Light mode';
+    });
+  </script>
+</body>
+</html>
