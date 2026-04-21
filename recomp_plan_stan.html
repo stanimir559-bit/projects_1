@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Body Recomposition Plan — Stan</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c07;
+    --card: #101710;
+    --card2: #141f13;
+    --border: #1e2e1c;
+    --accent: #a3e635;
+    --accent2: #6ee7b7;
+    --accent3: #fb923c;
+    --text: #e8f0e6;
+    --muted: #7a9476;
+    --red: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0d1f0b 0%, #0a1508 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: 'RECOMP';
+    position: absolute; right: -10px; top: -15px;
+    font-family: 'Bebas Neue'; font-size: 120px;
+    color: rgba(163,230,53,0.04); pointer-events: none; line-height: 1;
+  }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .title-block h1 { font-family: 'Bebas Neue'; font-size: 42px; letter-spacing: 2px; color: var(--accent); line-height: 1; }
+  .title-block p { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .stats-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
+  .stat {
+    background: rgba(163,230,53,0.07); border: 1px solid rgba(163,230,53,0.15);
+    border-radius: 8px; padding: 10px 16px; min-width: 90px;
+  }
+  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .stat-value { font-family: 'Space Mono'; font-size: 18px; color: var(--accent); font-weight: 700; }
+  .stat-unit { font-size: 11px; color: var(--muted); }
+  .macro-targets {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+  .macro-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 14px;
+  }
+  .macro-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .macro-chip span { font-size: 13px; }
+  .macro-chip strong { font-family: 'Space Mono'; font-size: 15px; }
+  .note-block {
+    background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.2);
+    border-radius: 8px; padding: 12px 16px; margin-top: 16px; font-size: 13px;
+  }
+  .note-block strong { color: var(--accent3); }
+
+  /* TABS */
+  .tabs-wrapper { position: sticky; top: 0; z-index: 50; background: #0a0f09; border-bottom: 1px solid var(--border); }
+  .tabs { display: flex; overflow-x: auto; scrollbar-width: none; padding: 0 16px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 14px 20px; font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1px; cursor: pointer; border-bottom: 2px solid transparent;
+    color: var(--muted); white-space: nowrap; transition: all 0.2s; background: none; border: none;
+    border-bottom: 2px solid transparent;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 24px 20px; max-width: 860px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 1px;
+    color: var(--accent); margin-bottom: 4px;
+  }
+  .card-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .section-heading {
+    font-family: 'Bebas Neue'; font-size: 30px; letter-spacing: 2px;
+    color: var(--text); margin-bottom: 6px; margin-top: 8px;
+  }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* EXERCISES */
+  .day-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .day-badge {
+    font-family: 'Bebas Neue'; font-size: 13px; letter-spacing: 1px;
+    background: var(--accent); color: #050805; padding: 3px 10px; border-radius: 4px;
+  }
+  .day-name { font-family: 'Bebas Neue'; font-size: 24px; color: var(--text); }
+  .day-focus { font-size: 12px; color: var(--muted); }
+  .exercise-list { display: flex; flex-direction: column; gap: 8px; }
+  .exercise {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--card2); border-radius: 8px; padding: 12px 14px;
+    border-left: 3px solid transparent;
+  }
+  .exercise.compound { border-left-color: var(--accent); }
+  .exercise.accessory { border-left-color: var(--accent2); }
+  .exercise.core { border-left-color: var(--accent3); }
+  .ex-num {
+    font-family: 'Space Mono'; font-size: 11px; color: var(--muted);
+    min-width: 20px; margin-top: 2px;
+  }
+  .ex-info { flex: 1; }
+  .ex-name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .ex-detail { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .ex-sets {
+    font-family: 'Space Mono'; font-size: 13px; font-weight: 700;
+    color: var(--accent); text-align: right; white-space: nowrap;
+  }
+  .ex-rest { font-size: 10px; color: var(--muted); text-align: right; margin-top: 2px; }
+  .tip-box {
+    background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.15);
+    border-radius: 8px; padding: 12px 14px; margin-top: 12px; font-size: 12.5px;
+    color: var(--accent2);
+  }
+  .tip-box strong { color: var(--accent2); }
+  .warmup-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(163,230,53,0.08); border: 1px solid rgba(163,230,53,0.2);
+    border-radius: 20px; padding: 4px 12px; font-size: 11px; color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  /* MEALS */
+  .meal-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .meal-tab {
+    padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); color: var(--muted);
+    background: none; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .meal-tab.active { background: var(--accent); color: #050805; border-color: var(--accent); }
+  .meal-group { display: none; }
+  .meal-group.active { display: block; }
+  .meal-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px; margin-bottom: 12px;
+  }
+  .meal-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .meal-name { font-family: 'Bebas Neue'; font-size: 20px; letter-spacing: 1px; color: var(--text); }
+  .meal-kcal {
+    font-family: 'Space Mono'; font-size: 14px; font-weight: 700;
+    color: var(--accent); white-space: nowrap;
+    background: rgba(163,230,53,0.08); padding: 4px 10px; border-radius: 6px;
+    border: 1px solid rgba(163,230,53,0.15);
+  }
+  .ingredients-list { margin-bottom: 12px; }
+  .ingredient {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0; border-bottom: 1px solid rgba(30,46,28,0.8); font-size: 13px;
+  }
+  .ingredient:last-child { border-bottom: none; }
+  .ingr-name { color: var(--text); }
+  .ingr-amount { color: var(--muted); font-family: 'Space Mono'; font-size: 12px; }
+  .macro-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .macro-pill {
+    padding: 3px 10px; border-radius: 4px; font-family: 'Space Mono'; font-size: 11px; font-weight: 700;
+  }
+  .mp-p { background: rgba(163,230,53,0.1); color: var(--accent); border: 1px solid rgba(163,230,53,0.2); }
+  .mp-c { background: rgba(251,146,60,0.1); color: var(--accent3); border: 1px solid rgba(251,146,60,0.2); }
+  .mp-f { background: rgba(110,231,183,0.1); color: var(--accent2); border: 1px solid rgba(110,231,183,0.2); }
+  .prep-note { font-size: 12px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+  /* SUPPLEMENTS */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 8px; top: 0; bottom: 0;
+    width: 1px; background: var(--border);
+  }
+  .timeline-item { position: relative; margin-bottom: 20px; }
+  .timeline-dot {
+    position: absolute; left: -20px; top: 4px;
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+  }
+  .t-time { font-family: 'Space Mono'; font-size: 11px; color: var(--accent); font-weight: 700; margin-bottom: 4px; }
+  .t-label { font-weight: 600; font-size: 14px; color: var(--text); }
+  .t-items { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .t-note { font-size: 12px; color: rgba(251,146,60,0.9); margin-top: 4px; }
+  .supp-card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; margin-top: 16px;
+  }
+  .supp-title { font-family: 'Bebas Neue'; font-size: 18px; color: var(--accent); margin-bottom: 8px; }
+  .supp-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .supp-item:last-child { border-bottom: none; }
+  .supp-name { color: var(--text); font-weight: 500; }
+  .supp-dose { font-family: 'Space Mono'; font-size: 11px; color: var(--muted); }
+
+  /* GROCERY */
+  .grocery-category { margin-bottom: 20px; }
+  .grocery-cat-title {
+    font-family: 'Bebas Neue'; font-size: 16px; letter-spacing: 1px;
+    color: var(--accent); border-bottom: 1px solid var(--border);
+    padding-bottom: 6px; margin-bottom: 10px;
+  }
+  .grocery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  @media (max-width: 480px) { .grocery-grid { grid-template-columns: 1fr; } }
+  .grocery-item {
+    display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+    background: var(--card2); border-radius: 6px; font-size: 13px;
+  }
+  .g-check { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--border); flex-shrink: 0; cursor: pointer; }
+  .g-name { flex: 1; }
+  .g-qty { font-family: 'Space Mono'; font-size: 11px; color: var(--muted); }
+
+  /* OVERLOAD */
+  .ol-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .ol-table th { text-align: left; padding: 8px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .ol-table td { padding: 10px 12px; font-size: 13px; border-bottom: 1px solid rgba(30,46,28,0.5); vertical-align: top; }
+  .ol-table tr:last-child td { border-bottom: none; }
+
+  /* MISC */
+  .badge {
+    display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 2px 8px; border-radius: 4px; margin-left: 6px;
+  }
+  .badge-compound { background: rgba(163,230,53,0.15); color: var(--accent); }
+  .badge-iso { background: rgba(110,231,183,0.15); color: var(--accent2); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+  .info-row { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; margin-bottom: 8px; }
+  .info-icon { color: var(--accent); min-width: 18px; }
+  footer { text-align: center; padding: 24px; color: var(--muted); font-size: 11px; border-top: 1px solid var(--border); margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="title-block">
+      <h1>Body Recomposition Plan</h1>
+      <p>Stan · 33y · 175cm · 85kg · Plovdiv — Updated April 2026</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-label">TDEE Est.</div>
+      <div class="stat-value">2,850</div>
+      <div class="stat-unit">kcal/day</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Target</div>
+      <div class="stat-value">2,400</div>
+      <div class="stat-unit">kcal/day</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Deficit</div>
+      <div class="stat-value">~350</div>
+      <div class="stat-unit">kcal/day</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Protein</div>
+      <div class="stat-value">190g</div>
+      <div class="stat-unit">2.2g/kg</div>
+    </div>
+  </div>
+  <div class="macro-targets">
+    <div class="macro-chip">
+      <div class="macro-dot" style="background:var(--accent)"></div>
+      <span>Protein <strong>190g</strong></span>
+    </div>
+    <div class="macro-chip">
+      <div class="macro-dot" style="background:var(--accent3)"></div>
+      <span>Carbs <strong>240g</strong></span>
+    </div>
+    <div class="macro-chip">
+      <div class="macro-dot" style="background:var(--accent2)"></div>
+      <span>Fat <strong>75g</strong></span>
+    </div>
+    <div class="macro-chip">
+      <div class="macro-dot" style="background:#f8fafc"></div>
+      <span>Total <strong>2,395 kcal</strong></span>
+    </div>
+  </div>
+  <div class="note-block" style="margin-top:14px">
+    <strong>⚡ Recomposition Logic:</strong> Your TDEE is ~2,850 kcal given your activity (4× gym + daily cycling + 8-10k steps). A ~350 kcal deficit with 190g protein and progressive overload creates the hormonal environment for simultaneous fat loss and muscle retention. With mid-range testosterone and creatine, this is highly achievable. Calories are higher on training days naturally via post-workout appetite.
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('training')">🏋️ Training</button>
+    <button class="tab" onclick="showTab('nutrition')">🥗 Meal Plan</button>
+    <button class="tab" onclick="showTab('supplements')">💊 Supplements</button>
+    <button class="tab" onclick="showTab('grocery')">🛒 Grocery List</button>
+    <button class="tab" onclick="showTab('overload')">📈 Progress Guide</button>
+  </div>
+</div>
+
+<!-- ======================== TRAINING ======================== -->
+<div class="section active" id="tab-training">
+  <p class="section-heading">PPL Training Program</p>
+  <p class="section-sub">Optimised for body recomposition · 4 sessions/week · 45–60 min fasted</p>
+  <div class="note-block" style="margin-bottom:20px">
+    <strong>Programming Logic:</strong> Compound lifts at low reps (4–6) for strength signal → accessory work at 8–15 for hypertrophy. This dual-rep-range approach maximises muscle retention during a deficit. Sessions are ~50 min to minimise cortisol from fasted training.
+  </div>
+
+  <!-- MONDAY - LEGS -->
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge">MON</span>
+      <div>
+        <div class="day-name">LEGS</div>
+        <div class="day-focus">Quad dominant · Hamstring · Glutes · Calves</div>
+      </div>
+    </div>
+    <div class="warmup-pill">⚡ Warm-up: 5 min bike + leg swings + hip circles (bodyweight squat ×15)</div>
+    <div class="exercise-list">
+      <div class="exercise compound">
+        <div class="ex-num">A1</div>
+        <div class="ex-info">
+          <div class="ex-name">Back Squat <span class="badge badge-compound">COMPOUND</span></div>
+          <div class="ex-detail">Full depth, brace hard. Increase weight when all 5 reps are clean.</div>
+        </div>
+        <div><div class="ex-sets">4×5</div><div class="ex-rest">3 min rest</div></div>
+      </div>
+      <div class="exercise compound">
+        <div class="ex-num">B1</div>
+        <div class="ex-info">
+          <div class="ex-name">Romanian Deadlift</div>
+          <div class="ex-detail">Feel the hamstring stretch, controlled negative (3s down).</div>
+        </div>
+        <div><div class="ex-sets">4×8–10</div><div class="ex-rest">2 min rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">C1</div>
+        <div class="ex-info">
+          <div class="ex-name">Leg Press <span class="badge badge-iso">ACCESSORY</span></div>
+          <div class="ex-detail">Feet shoulder-width, don't lock out knees at top.</div>
+        </div>
+        <div><div class="ex-sets">3×12–15</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">C2</div>
+        <div class="ex-info">
+          <div class="ex-name">Walking Lunges</div>
+          <div class="ex-detail">Dumbbell in hands. Keep torso upright, knee tracks over toes.</div>
+        </div>
+        <div><div class="ex-sets">3×10/leg</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">D1</div>
+        <div class="ex-info">
+          <div class="ex-name">Lying or Seated Leg Curl</div>
+          <div class="ex-detail">Full ROM. Pause at peak contraction 1 second.</div>
+        </div>
+        <div><div class="ex-sets">3×12–15</div><div class="ex-rest">60s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">E1</div>
+        <div class="ex-info">
+          <div class="ex-name">Standing Calf Raises</div>
+          <div class="ex-detail">Full stretch at bottom, full contraction at top. Slow and controlled.</div>
+        </div>
+        <div><div class="ex-sets">4×20</div><div class="ex-rest">45s rest</div></div>
+      </div>
+    </div>
+    <div class="tip-box">💡 <strong>Leg day note:</strong> Monday after a weekend rest = highest glycogen. This is your most important session. If you only have energy for one session this week, make it this one. Don't skip breakfast for more than 5 minutes post-workout.</div>
+  </div>
+
+  <!-- TUESDAY - PUSH -->
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge">TUE</span>
+      <div>
+        <div class="day-name">PUSH</div>
+        <div class="day-focus">Chest · Shoulders · Triceps</div>
+      </div>
+    </div>
+    <div class="warmup-pill">⚡ Warm-up: Band pull-aparts ×20 + shoulder circles + 2 light warm-up sets on bench</div>
+    <div class="exercise-list">
+      <div class="exercise compound">
+        <div class="ex-num">A1</div>
+        <div class="ex-info">
+          <div class="ex-name">Barbell Bench Press <span class="badge badge-compound">COMPOUND</span></div>
+          <div class="ex-detail">Grip just outside shoulders. Lower to lower chest. Full lockout.</div>
+        </div>
+        <div><div class="ex-sets">4×5</div><div class="ex-rest">3 min rest</div></div>
+      </div>
+      <div class="exercise compound">
+        <div class="ex-num">B1</div>
+        <div class="ex-info">
+          <div class="ex-name">Dumbbell Overhead Press</div>
+          <div class="ex-detail">Seated or standing. Neutral grip allowed. Full ROM.</div>
+        </div>
+        <div><div class="ex-sets">3×8–10</div><div class="ex-rest">2 min rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">C1</div>
+        <div class="ex-info">
+          <div class="ex-name">Incline DB Press <span class="badge badge-iso">ACCESSORY</span></div>
+          <div class="ex-detail">30–45° incline. Targets upper chest. Controlled negative.</div>
+        </div>
+        <div><div class="ex-sets">3×10–12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">D1</div>
+        <div class="ex-info">
+          <div class="ex-name">Lateral Raises (Cable or DB)</div>
+          <div class="ex-detail">Slight forward lean. Lead with elbows. Don't shrug.</div>
+        </div>
+        <div><div class="ex-sets">4×15–20</div><div class="ex-rest">60s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">E1</div>
+        <div class="ex-info">
+          <div class="ex-name">Skull Crushers or Close-Grip Bench</div>
+          <div class="ex-detail">EZ bar or dumbbell. Keep elbows tucked in.</div>
+        </div>
+        <div><div class="ex-sets">3×10–12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">F1</div>
+        <div class="ex-info">
+          <div class="ex-name">Cable Fly or Pec Deck</div>
+          <div class="ex-detail">Feel the stretch at the start. Mind-muscle connection here.</div>
+        </div>
+        <div><div class="ex-sets">3×12–15</div><div class="ex-rest">60s rest</div></div>
+      </div>
+    </div>
+    <div class="tip-box">💡 <strong>Push day note:</strong> On a caloric deficit, don't chase PRs on pressing every session. Aim for quality reps and progressive overload over 2–3 week cycles, not every single session.</div>
+  </div>
+
+  <!-- WEDNESDAY - PULL -->
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge">WED</span>
+      <div>
+        <div class="day-name">PULL</div>
+        <div class="day-focus">Back · Biceps · Rear Delts</div>
+      </div>
+    </div>
+    <div class="warmup-pill">⚡ Warm-up: Band pull-aparts ×20 + dead hangs 2×20s + cat-cow ×10</div>
+    <div class="exercise-list">
+      <div class="exercise compound">
+        <div class="ex-num">A1</div>
+        <div class="ex-info">
+          <div class="ex-name">Conventional Deadlift <span class="badge badge-compound">COMPOUND</span></div>
+          <div class="ex-detail">Hip hinge, not a squat. Brace 360°. Reset each rep from floor.</div>
+        </div>
+        <div><div class="ex-sets">4×4–5</div><div class="ex-rest">3 min rest</div></div>
+      </div>
+      <div class="exercise compound">
+        <div class="ex-num">B1</div>
+        <div class="ex-info">
+          <div class="ex-name">Weighted Pull-ups or Lat Pulldown</div>
+          <div class="ex-detail">If pull-ups: add weight when 3×10 feels easy. Full hang at bottom.</div>
+        </div>
+        <div><div class="ex-sets">4×8–10</div><div class="ex-rest">2 min rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">C1</div>
+        <div class="ex-info">
+          <div class="ex-name">Seated Cable Row or Barbell Row <span class="badge badge-iso">ACCESSORY</span></div>
+          <div class="ex-detail">Drive elbows back, squeeze shoulder blades at peak.</div>
+        </div>
+        <div><div class="ex-sets">3×10–12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">D1</div>
+        <div class="ex-info">
+          <div class="ex-name">Face Pulls (Cable, rope attachment)</div>
+          <div class="ex-detail">Pull to forehead, external rotation. Essential for shoulder health.</div>
+        </div>
+        <div><div class="ex-sets">4×20</div><div class="ex-rest">60s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">E1</div>
+        <div class="ex-info">
+          <div class="ex-name">Incline DB Curl</div>
+          <div class="ex-detail">Maximize stretch at bottom. Controlled 2s negative.</div>
+        </div>
+        <div><div class="ex-sets">3×10–12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">F1</div>
+        <div class="ex-info">
+          <div class="ex-name">Hammer Curls</div>
+          <div class="ex-detail">Neutral grip. Targets brachialis for arm thickness.</div>
+        </div>
+        <div><div class="ex-sets">2×12–15</div><div class="ex-rest">60s rest</div></div>
+      </div>
+    </div>
+    <div class="tip-box">💡 <strong>Pull day note:</strong> The deadlift mid-week is intentional — you're recovered from Mon/Tue but still have Thu/Fri energy buffer. Don't max out. Leave 1 rep in the tank.</div>
+  </div>
+
+  <!-- THURSDAY -->
+  <div class="card" style="border-color:rgba(110,231,183,0.2)">
+    <div class="day-header">
+      <span class="day-badge" style="background:var(--accent2);color:#050805">THU</span>
+      <div>
+        <div class="day-name" style="color:var(--accent2)">ACTIVE RECOVERY</div>
+        <div class="day-focus">No gym · Light cycling only · 8–10k steps</div>
+      </div>
+    </div>
+    <p style="font-size:13px; color:var(--muted)">This rest day is <strong style="color:var(--text)">not optional</strong>. Muscle grows during recovery, not during training. Keep your 30-min bike ride if you feel good but don't push intensity. Prioritise sleep tonight — aim for 7.5–8h.</p>
+  </div>
+
+  <!-- FRIDAY - FULL BODY -->
+  <div class="card">
+    <div class="day-header">
+      <span class="day-badge">FRI</span>
+      <div>
+        <div class="day-name">FULL BODY</div>
+        <div class="day-focus">Hypertrophy focus · Higher reps · Moderate weight</div>
+      </div>
+    </div>
+    <div class="warmup-pill">⚡ Warm-up: 5 min bike + dynamic stretches + 1 light set per compound</div>
+    <div class="exercise-list">
+      <div class="exercise compound">
+        <div class="ex-num">A1</div>
+        <div class="ex-info">
+          <div class="ex-name">Goblet Squat or Front Squat</div>
+          <div class="ex-detail">Dumbbell or barbell. Lower weight than Monday. Focus on depth and control.</div>
+        </div>
+        <div><div class="ex-sets">3×12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise compound">
+        <div class="ex-num">A2</div>
+        <div class="ex-info">
+          <div class="ex-name">DB Romanian Deadlift</div>
+          <div class="ex-detail">Both dumbbells. Emphasise hamstring stretch and control.</div>
+        </div>
+        <div><div class="ex-sets">3×12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">B1</div>
+        <div class="ex-info">
+          <div class="ex-name">DB Incline Press or Push-ups (weighted vest)</div>
+          <div class="ex-detail">Full ROM. Slower negative than earlier in the week.</div>
+        </div>
+        <div><div class="ex-sets">3×12</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">B2</div>
+        <div class="ex-info">
+          <div class="ex-name">Single-Arm DB Row</div>
+          <div class="ex-detail">Brace on bench. Full stretch, full retraction. Each arm.</div>
+        </div>
+        <div><div class="ex-sets">3×12/arm</div><div class="ex-rest">90s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">C1</div>
+        <div class="ex-info">
+          <div class="ex-name">DB Shoulder Press</div>
+          <div class="ex-detail">Seated or standing. Controlled, full range.</div>
+        </div>
+        <div><div class="ex-sets">3×12</div><div class="ex-rest">60s rest</div></div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">D1</div>
+        <div class="ex-info">
+          <div class="ex-name">Superset: DB Curl + Tricep Overhead Extension</div>
+          <div class="ex-detail">Back to back with no rest between. Rest 60s after each pair.</div>
+        </div>
+        <div><div class="ex-sets">3×12–15</div><div class="ex-rest">60s between</div></div>
+      </div>
+      <div class="exercise core">
+        <div class="ex-num">E1</div>
+        <div class="ex-info">
+          <div class="ex-name">Core Finisher <span class="badge" style="background:rgba(251,146,60,0.15);color:var(--accent3)">CORE</span></div>
+          <div class="ex-detail">Plank 3×45s + Dead Bug 3×8/side. Rest 30s between.</div>
+        </div>
+        <div><div class="ex-sets">3 rounds</div><div class="ex-rest">30s rest</div></div>
+      </div>
+    </div>
+    <div class="tip-box">💡 <strong>Full body note:</strong> Friday's session bridges the week and ensures every muscle group gets a second stimulus. Lower intensity than Mon–Wed. You should leave the gym feeling worked but not destroyed.</div>
+  </div>
+</div>
+
+<!-- ======================== NUTRITION ======================== -->
+<div class="section" id="tab-nutrition">
+  <p class="section-heading">Meal Plan</p>
+  <p class="section-sub">5 rotating options per slot · All ingredients available at Billa/Lidl Plovdiv · No pork</p>
+  <div class="note-block" style="margin-bottom:20px">
+    <strong>Daily structure:</strong> Breakfast (519 kcal fixed) → Lunch (~680 kcal) → Afternoon Snack (~380 kcal) → Dinner (~580 kcal). Meals introduce variety beyond beef and chicken: turkey, salmon, tuna, lentils, eggs, извара (cottage cheese).
+  </div>
+
+  <div class="meal-tabs">
+    <button class="meal-tab active" onclick="showMeal('lunch')">🍱 Lunch</button>
+    <button class="meal-tab" onclick="showMeal('snack')">🍎 Snack</button>
+    <button class="meal-tab" onclick="showMeal('dinner')">🍽️ Dinner</button>
+  </div>
+
+  <!-- LUNCHES -->
+  <div class="meal-group active" id="meal-lunch">
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">L1 · Grilled Chicken Rice Bowl</div><div style="font-size:12px;color:var(--muted)">Classic recomp staple — high protein, moderate carbs, easy prep</div></div>
+        <div class="meal-kcal">696 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Chicken breast</span><span class="ingr-amount">220g</span></div>
+        <div class="ingredient"><span class="ingr-name">White rice (dry)</span><span class="ingr-amount">80g</span></div>
+        <div class="ingredient"><span class="ingr-name">Broccoli (steamed)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">12g (~1 tbsp)</span></div>
+        <div class="ingredient"><span class="ingr-name">Garlic, lemon, herbs</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 62g</span>
+        <span class="macro-pill mp-c">Carbs 75g</span>
+        <span class="macro-pill mp-f">Fat 16g</span>
+      </div>
+      <p class="prep-note">⏱ Prep: Cook rice ahead (batch). Season chicken with garlic powder, paprika, lemon. Pan-fry 8–10 min. Steam broccoli 5 min.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">L2 · Turkey Stuffed Bell Peppers</div><div style="font-size:12px;color:var(--muted)">High protein, good fibre, Bulgarian-friendly ingredients</div></div>
+        <div class="meal-kcal">663 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Turkey mince (кайма пуешко)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Bell peppers (2 large)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Brown rice (dry)</span><span class="ingr-amount">75g</span></div>
+        <div class="ingredient"><span class="ingr-name">Crushed tomatoes / passata</span><span class="ingr-amount">100g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">10g</span></div>
+        <div class="ingredient"><span class="ingr-name">Onion, garlic, cumin</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 55g</span>
+        <span class="macro-pill mp-c">Carbs 77g</span>
+        <span class="macro-pill mp-f">Fat 16g</span>
+      </div>
+      <p class="prep-note">⏱ Prep: Cook rice. Sauté turkey with onion+garlic. Mix with tomatoes. Fill peppers. Bake 25 min at 180°C OR skip baking and just serve as a bowl.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">L3 · Pan-Seared Salmon + Sweet Potato</div><div style="font-size:12px;color:var(--muted)">Omega-3 day · Rich in DHA, healthy fats, carotenoids</div></div>
+        <div class="meal-kcal">601 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Salmon fillet (fresh/frozen — Billa)</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Sweet potato (сладки картофи)</span><span class="ingr-amount">250g</span></div>
+        <div class="ingredient"><span class="ingr-name">Mixed greens or arugula</span><span class="ingr-amount">80g</span></div>
+        <div class="ingredient"><span class="ingr-name">Lemon juice, fresh dill</span><span class="ingr-amount">to taste</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil (for pan only)</span><span class="ingr-amount">5g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 36g</span>
+        <span class="macro-pill mp-c">Carbs 55g</span>
+        <span class="macro-pill mp-f">Fat 27g</span>
+      </div>
+      <p class="prep-note">⏱ Note: Protein slightly lower here (salmon fat offsets). Skip Omega-3 supplement on this day — you're getting plenty from the fish. Roast sweet potato 25 min at 200°C. Pan-sear salmon 3–4 min each side.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">L4 · Lean Beef Stir Fry + Egg Noodles</div><div style="font-size:12px;color:var(--muted)">Highest protein lunch · Leg day / training day option</div></div>
+        <div class="meal-kcal">661 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Lean beef strips / телешко (телешки хляб OK)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Egg noodles (dry)</span><span class="ingr-amount">70g</span></div>
+        <div class="ingredient"><span class="ingr-name">Mixed veggies (peppers, carrots, zucchini)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Soy sauce + garlic + ginger</span><span class="ingr-amount">to taste</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">10g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 62g</span>
+        <span class="macro-pill mp-c">Carbs 57g</span>
+        <span class="macro-pill mp-f">Fat 20g</span>
+      </div>
+      <p class="prep-note">⏱ Prep: Cook noodles. Slice beef thin, stir-fry 3–4 min on high heat. Add veggies, soy, garlic. Toss noodles in. Done in ~15 min total.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">L5 · Red Lentil Soup + Grilled Chicken</div><div style="font-size:12px;color:var(--muted)">High fibre day · Gut health · Batch-cook friendly</div></div>
+        <div class="meal-kcal">575 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Red lentils (червена леща — Lidl/Billa)</span><span class="ingr-amount">80g dry</span></div>
+        <div class="ingredient"><span class="ingr-name">Chicken breast</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Carrot + onion + celery</span><span class="ingr-amount">150g total</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">10g</span></div>
+        <div class="ingredient"><span class="ingr-name">Cumin, turmeric, paprika, garlic</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 55g</span>
+        <span class="macro-pill mp-c">Carbs 57g</span>
+        <span class="macro-pill mp-f">Fat 13g</span>
+      </div>
+      <p class="prep-note">⏱ Batch cook on Sunday: make a big pot of lentil soup (stores 4 days in fridge). Grill chicken fresh each day — takes 10 min.</p>
+    </div>
+  </div>
+
+  <!-- SNACKS -->
+  <div class="meal-group" id="meal-snack">
+    <div class="note-block" style="margin-bottom:16px">
+      <strong>Snack timing:</strong> Aim for 14:00–16:00 — between lunch and dinner. This bridges the protein gap and keeps blood sugar stable. On days you had a big lunch or feel full, skip it or have the lighter options (S3, S5).
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">S1 · Cottage Cheese + Banana + Walnuts</div><div style="font-size:12px;color:var(--muted)">Извара — cheap, high-protein, local staple</div></div>
+        <div class="meal-kcal">397 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Извара (low-fat cottage cheese) — Lidl or Billa</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Banana</span><span class="ingr-amount">1 medium (120g)</span></div>
+        <div class="ingredient"><span class="ingr-name">Walnuts (орехи)</span><span class="ingr-amount">20g</span></div>
+        <div class="ingredient"><span class="ingr-name">Cinnamon</span><span class="ingr-amount">pinch</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 30g</span>
+        <span class="macro-pill mp-c">Carbs 34g</span>
+        <span class="macro-pill mp-f">Fat 17g</span>
+      </div>
+      <p class="prep-note">⏱ Zero prep. Use Walnuts from the same bag as your existing орехи. Takes 2 minutes. Great post-cycling snack.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">S2 · Greek Yogurt + Berries + Almonds</div><div style="font-size:12px;color:var(--muted)">Probiotics + antioxidants + healthy fat</div></div>
+        <div class="meal-kcal">353 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Greek yogurt 0% (Lidl Pilos or Billa brand)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Mixed berries (fresh or frozen)</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Almonds (бадеми)</span><span class="ingr-amount">25g</span></div>
+        <div class="ingredient"><span class="ingr-name">Honey (optional)</span><span class="ingr-amount">10g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 26g</span>
+        <span class="macro-pill mp-c">Carbs 34g</span>
+        <span class="macro-pill mp-f">Fat 14g</span>
+      </div>
+      <p class="prep-note">⏱ Use frozen berries from Lidl's freezer section — cheaper than fresh, same nutrition. Thaw in fridge overnight.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">S3 · Tuna + Rice Cakes + Tomatoes</div><div style="font-size:12px;color:var(--muted)">Highest protein snack · Lowest fat · Great on rest days</div></div>
+        <div class="meal-kcal">376 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Canned tuna in water (риба тон) — Lidl</span><span class="ingr-amount">130g drained</span></div>
+        <div class="ingredient"><span class="ingr-name">Rice cakes (оризови гризини)</span><span class="ingr-amount">4 pieces (40g)</span></div>
+        <div class="ingredient"><span class="ingr-name">Cherry tomatoes</span><span class="ingr-amount">100g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil + lemon juice</span><span class="ingr-amount">8g + squeeze</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 34g</span>
+        <span class="macro-pill mp-c">Carbs 37g</span>
+        <span class="macro-pill mp-f">Fat 10g</span>
+      </div>
+      <p class="prep-note">⏱ Open can, drain, mix with lemon + olive oil. Stack on rice cakes. 3 minutes. Great to bring to work.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">S4 · Boiled Eggs + Сирене + Sourdough</div><div style="font-size:12px;color:var(--muted)">Bulgarian classic — filling and satisfying</div></div>
+        <div class="meal-kcal">422 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Eggs (hard boiled)</span><span class="ingr-amount">2 large</span></div>
+        <div class="ingredient"><span class="ingr-name">White cheese / Сирене (Bulgarian feta)</span><span class="ingr-amount">50g</span></div>
+        <div class="ingredient"><span class="ingr-name">Cucumber + tomato slices</span><span class="ingr-amount">150g + 100g</span></div>
+        <div class="ingredient"><span class="ingr-name">Sourdough bread (квасен хляб)</span><span class="ingr-amount">40g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 26g</span>
+        <span class="macro-pill mp-c">Carbs 33g</span>
+        <span class="macro-pill mp-f">Fat 21g</span>
+      </div>
+      <p class="prep-note">⏱ Boil eggs the night before. This snack is essentially a mini Shopska + eggs — feels substantial and very Bulgarian. Note: take Zinc 1h after (not with dairy).</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">S5 · Whey Shake + Rice Cakes + Peanut Butter</div><div style="font-size:12px;color:var(--muted)">Quick and portable · Great on busy days</div></div>
+        <div class="meal-kcal">336 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Whey protein (Dymatize) — 35g scoop</span><span class="ingr-amount">35g</span></div>
+        <div class="ingredient"><span class="ingr-name">Water or milk (low-fat)</span><span class="ingr-amount">250ml</span></div>
+        <div class="ingredient"><span class="ingr-name">Rice cakes</span><span class="ingr-amount">3 pieces (30g)</span></div>
+        <div class="ingredient"><span class="ingr-name">Peanut butter (фъстъчено масло — Lidl)</span><span class="ingr-amount">15g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 33g</span>
+        <span class="macro-pill mp-c">Carbs 30g</span>
+        <span class="macro-pill mp-f">Fat 10g</span>
+      </div>
+      <p class="prep-note">⏱ Use when you have zero time or no appetite for a full snack. With milk instead of water, add ~50 kcal and 5g protein.</p>
+    </div>
+  </div>
+
+  <!-- DINNERS -->
+  <div class="meal-group" id="meal-dinner">
+    <div class="note-block" style="margin-bottom:16px">
+      <strong>Dinner approach:</strong> Lower carbs than lunch, higher protein, moderate fat. This aligns with lower energy needs in the evening and supports overnight muscle protein synthesis. Don't eat less than 1.5h before bed.
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">D1 · Beef Kofta + Shopska Salad</div><div style="font-size:12px;color:var(--muted)">Bulgarian home cooking · Highest protein dinner</div></div>
+        <div class="meal-kcal">533 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Lean beef mince (телешка кайма)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Tomato + cucumber + red pepper</span><span class="ingr-amount">150g+100g+50g</span></div>
+        <div class="ingredient"><span class="ingr-name">Сирене (white cheese)</span><span class="ingr-amount">40g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil (for salad dressing)</span><span class="ingr-amount">10g</span></div>
+        <div class="ingredient"><span class="ingr-name">Spices: cumin, paprika, garlic, onion powder</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 58g</span>
+        <span class="macro-pill mp-c">Carbs 15g</span>
+        <span class="macro-pill mp-f">Fat 26g</span>
+      </div>
+      <p class="prep-note">⏱ Shape kofta patties, grill or pan-fry ~8 min. Chop salad. Done in 20 min. This is the ultimate low-carb, high-protein Bulgarian dinner.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">D2 · Baked Salmon + Green Beans + Извара</div><div style="font-size:12px;color:var(--muted)">Omega-3 dinner · Skip supplement Omega-3 this day</div></div>
+        <div class="meal-kcal">488 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Salmon fillet</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Green beans (зелен фасул) or asparagus</span><span class="ingr-amount">250g</span></div>
+        <div class="ingredient"><span class="ingr-name">Извара (cottage cheese) — side</span><span class="ingr-amount">100g</span></div>
+        <div class="ingredient"><span class="ingr-name">Lemon, dill, garlic</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 49g</span>
+        <span class="macro-pill mp-c">Carbs 23g</span>
+        <span class="macro-pill mp-f">Fat 24g</span>
+      </div>
+      <p class="prep-note">⏱ Bake salmon in foil at 200°C for 15 min. Steam green beans 5 min. Simple and clean.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">D3 · Chicken Thighs + Roasted Veggies + Sweet Potato</div><div style="font-size:12px;color:var(--muted)">Great on leg day — replenish glycogen</div></div>
+        <div class="meal-kcal">528 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Chicken thighs (boneless, skinless)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Zucchini + peppers + cherry tomatoes</span><span class="ingr-amount">300g mix</span></div>
+        <div class="ingredient"><span class="ingr-name">Sweet potato</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">12g</span></div>
+        <div class="ingredient"><span class="ingr-name">Paprika, oregano, garlic</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 45g</span>
+        <span class="macro-pill mp-c">Carbs 45g</span>
+        <span class="macro-pill mp-f">Fat 19g</span>
+      </div>
+      <p class="prep-note">⏱ One-pan dinner. Mix everything with olive oil and spices. Roast at 200°C for 30–35 min. Minimal effort, very tasty. Chicken thighs are juicier than breast and more forgiving.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">D4 · Turkey Meatballs + Zucchini Noodles + Sourdough</div><div style="font-size:12px;color:var(--muted)">Highest protein dinner · Low-carb base + carb option</div></div>
+        <div class="meal-kcal">595 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Turkey mince (пуешка кайма)</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Zucchini (as noodles — use peeler)</span><span class="ingr-amount">350g</span></div>
+        <div class="ingredient"><span class="ingr-name">Crushed tomatoes / passata</span><span class="ingr-amount">150g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil</span><span class="ingr-amount">8g</span></div>
+        <div class="ingredient"><span class="ingr-name">Sourdough bread (for dipping)</span><span class="ingr-amount">50g</span></div>
+        <div class="ingredient"><span class="ingr-name">Кашкавал / parmesan (grated)</span><span class="ingr-amount">20g</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 64g</span>
+        <span class="macro-pill mp-c">Carbs 45g</span>
+        <span class="macro-pill mp-f">Fat 18g</span>
+      </div>
+      <p class="prep-note">⏱ Shape meatballs (8–10 small). Pan-fry 6 min. Add tomato sauce, simmer 8 min. Use vegetable peeler for zucchini noodles — no spiralizer needed.</p>
+    </div>
+
+    <div class="meal-card">
+      <div class="meal-card-header">
+        <div><div class="meal-name">D5 · Chicken Breast + Quinoa + Salad</div><div style="font-size:12px;color:var(--muted)">Complete protein profile · Full amino acid spectrum</div></div>
+        <div class="meal-kcal">570 kcal</div>
+      </div>
+      <div class="ingredients-list">
+        <div class="ingredient"><span class="ingr-name">Chicken breast</span><span class="ingr-amount">200g</span></div>
+        <div class="ingredient"><span class="ingr-name">Quinoa (киноа — Billa organic section)</span><span class="ingr-amount">60g dry</span></div>
+        <div class="ingredient"><span class="ingr-name">Tomato + cucumber + spring onion</span><span class="ingr-amount">150g + 100g + 20g</span></div>
+        <div class="ingredient"><span class="ingr-name">Olive oil + lemon dressing</span><span class="ingr-amount">10g oil</span></div>
+        <div class="ingredient"><span class="ingr-name">Fresh parsley or mint</span><span class="ingr-amount">to taste</span></div>
+      </div>
+      <div class="macro-bar">
+        <span class="macro-pill mp-p">Protein 56g</span>
+        <span class="macro-pill mp-c">Carbs 48g</span>
+        <span class="macro-pill mp-f">Fat 16g</span>
+      </div>
+      <p class="prep-note">⏱ Quinoa takes 15 min to cook — very similar to rice. Tastes better with chicken stock added. Pan-fry chicken. This is the lightest and cleanest dinner option.</p>
+    </div>
+  </div>
+
+  <!-- DAILY SUMMARY -->
+  <hr class="divider">
+  <p class="section-heading" style="font-size:22px">Daily Macro Summary</p>
+  <div class="card">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Example full day (Breakfast + L1 + S1 + D1):</p>
+    <div class="ingredients-list">
+      <div class="ingredient"><span class="ingr-name">🌙 Overnight Oats V2 (breakfast)</span><span class="ingr-amount">519 kcal · 45.9P · 44.3C · 16.5F</span></div>
+      <div class="ingredient"><span class="ingr-name">🍱 L1: Chicken Rice Bowl</span><span class="ingr-amount">696 kcal · 62P · 75C · 16F</span></div>
+      <div class="ingredient"><span class="ingr-name">🍎 S1: Извара + Banana + Walnuts</span><span class="ingr-amount">397 kcal · 30P · 34C · 17F</span></div>
+      <div class="ingredient"><span class="ingr-name">🍽️ D1: Beef Kofta + Shopska</span><span class="ingr-amount">533 kcal · 58P · 15C · 26F</span></div>
+    </div>
+    <div class="macro-bar" style="margin-top:14px">
+      <span class="macro-pill mp-p" style="font-size:13px">Protein 196g ✓</span>
+      <span class="macro-pill mp-c" style="font-size:13px">Carbs 168g</span>
+      <span class="macro-pill mp-f" style="font-size:13px">Fat 75g ✓</span>
+      <span class="macro-pill" style="background:rgba(248,250,252,0.07);color:var(--text);border:1px solid var(--border);font-size:13px">2,145 kcal</span>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">Carbs slightly under target — add 50g dry rice to lunch or a banana. Mix meals to hit your numbers.</p>
+  </div>
+</div>
+
+<!-- ======================== SUPPLEMENTS ======================== -->
+<div class="section" id="tab-supplements">
+  <p class="section-heading">Supplement Protocol</p>
+  <p class="section-sub">Timing optimised for absorption · Based on your current stack</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="t-time">06:30 — PRE-WORKOUT</div>
+      <div class="t-label">Before leaving for gym</div>
+      <div class="t-items">☕ Coffee · 💧 500ml water · Citrulline Malate (already doing this ✓) · Vitamin C 500mg</div>
+      <div class="t-note">→ Vit C pre-workout: antioxidant support, aids iron absorption, synergises with your fasted training.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="t-time">08:00 — POST-WORKOUT BREAKFAST</div>
+      <div class="t-label">Overnight Oats V2 (your fixed breakfast)</div>
+      <div class="t-items">🥣 Overnight Oats (contains Whey 35g ✓) · + Creatine Monohydrate 5g (stir into oats or water)</div>
+      <div class="t-note">→ Creatine timing is irrelevant — daily consistency is what matters. Taking it with carbs may marginally improve uptake.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="t-time">12:30–13:00 — LUNCH</div>
+      <div class="t-label">With your biggest meal of the day</div>
+      <div class="t-items">🐟 Omega-3 (2–3g EPA+DHA) · ☀️ Vitamin D3 (2000–4000 IU) · 🦴 Vitamin K2 (MK-7, 100–200mcg)</div>
+      <div class="t-note">→ D3, K2, and Omega-3 are all fat-soluble. Taking them with a meal containing olive oil/fat (which all your lunches have) dramatically increases absorption. D3 + K2 always together — they're synergistic partners.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="t-time">15:00–16:00 — AFTERNOON (5×/week)</div>
+      <div class="t-label">1–2h after your afternoon snack if snack contained dairy</div>
+      <div class="t-items">🔩 Zinc (15–25mg) — avoid taking with dairy/calcium as it competes for absorption</div>
+      <div class="t-note">→ If your snack was S3 (tuna) or S5 (shake), you can take Zinc immediately with it. If snack was S1/S2/S4 (dairy), wait 1–2h. Zinc is best on a slight empty stomach.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="t-time">19:00–20:00 — WITH DINNER</div>
+      <div class="t-label">Evening / with food</div>
+      <div class="t-items">🌿 Ashwagandha (KSM-66 form preferred, 300–600mg)</div>
+      <div class="t-note">→ Ashwagandha taken in the evening supports cortisol regulation overnight and can improve sleep quality — important for your recomp.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:var(--accent2)"></div>
+      <div class="t-time">21:30–22:00 — BEFORE BED</div>
+      <div class="t-label">30–60 min before sleep</div>
+      <div class="t-items">🌙 Magnesium Citrate (300–400mg elemental Mg) — already doing this ✓</div>
+      <div class="t-note">→ Excellent timing. Magnesium Citrate improves sleep quality, reduces muscle tension, and supports testosterone production overnight.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="supp-card">
+    <div class="supp-title">Dosage Reference</div>
+    <div class="supp-item"><span class="supp-name">Creatine Monohydrate</span><span class="supp-dose">5g/day · Every day including rest days · No loading needed</span></div>
+    <div class="supp-item"><span class="supp-name">Vitamin D3</span><span class="supp-dose">2,000–4,000 IU/day · Higher end in winter (Oct–Mar) in Bulgaria</span></div>
+    <div class="supp-item"><span class="supp-name">Vitamin K2 (MK-7)</span><span class="supp-dose">100–200mcg/day · Always with D3</span></div>
+    <div class="supp-item"><span class="supp-name">Omega-3</span><span class="supp-dose">2–3g EPA+DHA/day · Skip on salmon days</span></div>
+    <div class="supp-item"><span class="supp-name">Zinc</span><span class="supp-dose">15–25mg elemental · 5×/week · Away from calcium</span></div>
+    <div class="supp-item"><span class="supp-name">Vitamin C</span><span class="supp-dose">500mg pre-workout · Or split 500mg AM + 500mg PM</span></div>
+    <div class="supp-item"><span class="supp-name">Ashwagandha (KSM-66)</span><span class="supp-dose">300–600mg/day · Evening · 8–12 week cycles with 4 week break</span></div>
+    <div class="supp-item"><span class="supp-name">Magnesium Citrate</span><span class="supp-dose">300–400mg elemental/day · Before bed · Check label for elemental Mg %</span></div>
+    <div class="supp-item"><span class="supp-name">Citrulline Malate</span><span class="supp-dose">6–8g pre-workout · Already optimal ✓</span></div>
+    <div class="supp-item"><span class="supp-name">Whey Protein (Dymatize)</span><span class="supp-dose">35g in breakfast · Additional 35g shake if protein target is short (&lt;170g)</span></div>
+  </div>
+
+  <div class="note-block" style="margin-top:16px">
+    <strong>⚠️ Ashwagandha cycling:</strong> Don't take indefinitely. Use 8–12 weeks on, then take a 4-week break. Your body adapts and it becomes less effective. Given mid-range testosterone and stress from training + deficit, this supplement is well-suited for your current phase.
+  </div>
+</div>
+
+<!-- ======================== GROCERY ======================== -->
+<div class="section" id="tab-grocery">
+  <p class="section-heading">Weekly Grocery List</p>
+  <p class="section-sub">Optimised for Billa + Lidl Plovdiv · One weekly shop</p>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🥩 PROTEINS</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Chicken breast (пилешко филе)</span><span class="g-qty">1–1.2 kg/week</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Turkey mince (пуешка кайма)</span><span class="g-qty">400g/week</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Lean beef mince (телешка кайма)</span><span class="g-qty">400g/week</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Salmon fillet (fresh or frozen)</span><span class="g-qty">300g/week</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Canned tuna in water (риба тон)</span><span class="g-qty">3–4 cans</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Eggs</span><span class="g-qty">10–12 eggs</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Chicken thighs boneless (бутчета)</span><span class="g-qty">400g/week</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🥛 DAIRY & PROTEIN</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Извара / cottage cheese (low fat)</span><span class="g-qty">400–600g</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Greek yogurt 0% (Pilos Lidl or Billa)</span><span class="g-qty">400g</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Сирене (Bulgarian white cheese)</span><span class="g-qty">200g block</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Skyr (as per your breakfast recipe)</span><span class="g-qty">500g</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Кашкавал (hard cheese, grated)</span><span class="g-qty">80g</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🌾 CARBS & GRAINS</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">White rice (ориз)</span><span class="g-qty">500g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Brown rice</span><span class="g-qty">500g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Quinoa (киноа — Billa bio section)</span><span class="g-qty">250g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Red lentils (червена леща)</span><span class="g-qty">400g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Egg noodles (яйчени юфки)</span><span class="g-qty">250g pack</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Rice cakes (оризови гризини)</span><span class="g-qty">1 pack</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Sourdough / whole grain bread</span><span class="g-qty">1 loaf</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Sweet potato (сладки картофи)</span><span class="g-qty">1 kg</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Oats (rolled, as per breakfast)</span><span class="g-qty">ongoing</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🥦 VEGETABLES</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Broccoli</span><span class="g-qty">500g+</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Zucchini (тиквичка)</span><span class="g-qty">4–5 medium</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Bell peppers (чушки)</span><span class="g-qty">6–8 pieces</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Tomatoes (домати)</span><span class="g-qty">1 kg</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Cucumbers (краставици)</span><span class="g-qty">4–5 pieces</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Spinach (шпинат — fresh or frozen Lidl)</span><span class="g-qty">200g</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Green beans (зелен фасул)</span><span class="g-qty">300g (frozen OK)</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Carrots, onions, celery (for lentils)</span><span class="g-qty">staples</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Cherry tomatoes</span><span class="g-qty">250g punnet</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🍓 FRUITS</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Bananas</span><span class="g-qty">5–6 pieces</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Mixed berries (frozen — Lidl)</span><span class="g-qty">400g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Lemons</span><span class="g-qty">3–4</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Strawberries (for breakfast, seasonal)</span><span class="g-qty">ongoing</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🥜 FATS & CONDIMENTS</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Extra virgin olive oil</span><span class="g-qty">ongoing</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Walnuts (орехи)</span><span class="g-qty">200g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Almonds (бадеми)</span><span class="g-qty">150g bag</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Peanut butter (фъстъчено масло — Lidl)</span><span class="g-qty">1 jar</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Crushed tomatoes / passata</span><span class="g-qty">2 cans</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Soy sauce (low sodium if available)</span><span class="g-qty">1 bottle</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Honey (мед — small jar)</span><span class="g-qty">1 jar</span></div>
+    </div>
+  </div>
+
+  <div class="grocery-category">
+    <div class="grocery-cat-title">🧂 SPICES (stock up)</div>
+    <div class="grocery-grid">
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Paprika (sweet + smoked)</span><span class="g-qty">staple</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Cumin (кимион)</span><span class="g-qty">staple</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Turmeric (куркума)</span><span class="g-qty">anti-inflammatory bonus</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Garlic (fresh + powder)</span><span class="g-qty">staple</span></div>
+      <div class="grocery-item"><div class="g-check" onclick="this.style.background=this.style.background?'':'var(--accent)'"></div><span class="g-name">Dried oregano, dill, parsley</span><span class="g-qty">staple</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== PROGRESS GUIDE ======================== -->
+<div class="section" id="tab-overload">
+  <p class="section-heading">Progress & Overload Guide</p>
+  <p class="section-sub">How to track, when to increase, and what to expect</p>
+
+  <div class="card">
+    <div class="card-title">Progressive Overload Rules</div>
+    <div class="exercise-list">
+      <div class="exercise compound">
+        <div class="ex-num">✓</div>
+        <div class="ex-info">
+          <div class="ex-name">When to add weight</div>
+          <div class="ex-detail">Complete all prescribed sets at the TOP of the rep range with clean form, with at least 1 rep left in the tank. Then add 2.5kg next session.</div>
+        </div>
+      </div>
+      <div class="exercise compound">
+        <div class="ex-num">✓</div>
+        <div class="ex-info">
+          <div class="ex-name">When NOT to add weight</div>
+          <div class="ex-detail">You struggled on the last set, or you had to compromise form. Repeat the same weight next session. Progress is measured in weeks, not days.</div>
+        </div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">✓</div>
+        <div class="ex-info">
+          <div class="ex-name">Deload every 6–8 weeks</div>
+          <div class="ex-detail">Reduce all weights by ~40% but keep same number of sets. This is active recovery — not a week off. It prevents accumulated fatigue from stalling progress.</div>
+        </div>
+      </div>
+      <div class="exercise accessory">
+        <div class="ex-num">✓</div>
+        <div class="ex-info">
+          <div class="ex-name">Track every session</div>
+          <div class="ex-detail">Write down every exercise, weight, sets, and reps. Without this, you're guessing. Use any app or a notebook. Date every entry.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Body Recomposition Timeline</div>
+    <div class="card-subtitle">What to realistically expect at your stats</div>
+    <table class="ol-table">
+      <tr>
+        <th>Timeframe</th>
+        <th>Expected Changes</th>
+        <th>How to Measure</th>
+      </tr>
+      <tr>
+        <td style="color:var(--accent);font-family:'Space Mono';font-size:12px">Weeks 1–2</td>
+        <td>Water weight normalises. Scale may drop 1–1.5 kg. Strength stays flat or improves.</td>
+        <td>Scale (morning, fasted). Don't read too much into it yet.</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent);font-family:'Space Mono';font-size:12px">Weeks 3–6</td>
+        <td>Visible changes begin. Waist should start narrowing. Strength climbing on compounds.</td>
+        <td>Tape measure around waist. Progress photos every 2 weeks. Scale trend over 7-day average.</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent);font-family:'Space Mono';font-size:12px">Weeks 7–12</td>
+        <td>Noticeable body composition shift. Scale may not move much but mirror tells the story.</td>
+        <td>Before/after photos. How clothes fit. Gym performance.</td>
+      </tr>
+      <tr>
+        <td style="color:var(--accent);font-family:'Space Mono';font-size:12px">3–6 months</td>
+        <td>Significant recomposition visible. Target: 80–81 kg with improved muscle definition.</td>
+        <td>Monthly measurements + photos + gym log.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Rules for Your Situation</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+      <div class="info-row"><span class="info-icon">①</span><span><strong>Don't chase the scale.</strong> At your stats with your training volume, muscle gain and fat loss will happen simultaneously. The scale might not move for 3–4 weeks while your body is recomping. This is success, not failure.</span></div>
+      <div class="info-row"><span class="info-icon">②</span><span><strong>Sleep is mandatory.</strong> With fasted training, high activity, and a deficit, you absolutely need 7.5–8h. Your Magnesium Citrate + Ashwagandha stack should help significantly. Poor sleep tanks testosterone and cortisol spikes undo recomp.</span></div>
+      <div class="info-row"><span class="info-icon">③</span><span><strong>Don't add more cardio.</strong> Your current activity level (4× gym + daily cycling + 8-10k steps) is already substantial. Adding more cardio to speed up fat loss will increase muscle catabolism in a deficit. The cycling you do is sufficient and optimal.</span></div>
+      <div class="info-row"><span class="info-icon">④</span><span><strong>Protein is the priority.</strong> If you're going to be imprecise on one macro, let it be carbs or fat. Never let protein drop below 170g on any day. Your 519-kcal breakfast already gives you 46g — you're starting every day from a strong base.</span></div>
+      <div class="info-row"><span class="info-icon">⑤</span><span><strong>Weekend flexibility.</strong> You don't need to track perfectly 7 days a week. Hit your protein and calorie targets Mon–Fri strictly. On weekends, eat intuitively but keep protein high. This is sustainable and won't derail your progress.</span></div>
+      <div class="info-row"><span class="info-icon">⑥</span><span><strong>Re-evaluate after 8 weeks.</strong> If the scale has dropped more than 3kg and strength is falling, eat more. If scale hasn't moved and progress photos show no change, reduce by another 100–150 kcal. Stay flexible.</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>Built for Stan · Body Recomposition Plan · April 2026 · Plovdiv, Bulgaria<br>
+<span style="color:rgba(163,230,53,0.4)">Consult a physician before beginning any new diet or training program.</span>
+</footer>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+function showMeal(id) {
+  document.querySelectorAll('.meal-group').forEach(g => g.classList.remove('active'));
+  document.querySelectorAll('.meal-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('meal-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
