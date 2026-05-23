@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Красив индекс на файловете в GitHub repository." />
+  <title>Stan Project's Home</title>
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #111831;
+      --card: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.13);
+      --text: #f8fafc;
+      --muted: #a8b3cf;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #7c3aed;
+      --accent-2: #22d3ee;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #fb7185;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max-width: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(124, 58, 237, 0.28), transparent 34%),
+        radial-gradient(circle at 85% 8%, rgba(34, 211, 238, 0.18), transparent 32%),
+        linear-gradient(135deg, #070b16 0%, #0b1020 48%, #111827 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.75), transparent 78%);
+      z-index: -1;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 52px;
+    }
+
+    .hero {
+      position: relative;
+      padding: 36px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      right: -110px;
+      top: -120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34, 211, 238, .25), transparent 65%);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 16px 35px rgba(124, 58, 237, .38);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .brand-subtitle {
+      margin: 2px 0 0;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(16px);
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+      white-space: nowrap;
+    }
+
+    .github-link:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.13);
+      border-color: rgba(255,255,255,.24);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+      gap: 26px;
+      align-items: end;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 780px;
+      font-size: clamp(36px, 6vw, 72px);
+      line-height: .95;
+      letter-spacing: -0.07em;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff, #c4b5fd 42%, #67e8f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      margin: 20px 0 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat-card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .panel {
+      margin-top: 22px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: rgba(255,255,255,.07);
+      box-shadow: 0 18px 54px rgba(0,0,0,.22);
+      backdrop-filter: blur(22px);
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) 180px 180px auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .field {
+      position: relative;
+    }
+
+    .field svg {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .input,
+    .select,
+    .view-btn {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      color: var(--text);
+      background: rgba(7, 11, 22, .58);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .input {
+      padding: 0 16px 0 44px;
+    }
+
+    .select {
+      padding: 0 14px;
+      cursor: pointer;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: rgba(34, 211, 238, .65);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, .12);
+      background: rgba(7, 11, 22, .78);
+    }
+
+    .view-toggle {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(7, 11, 22, .45);
+    }
+
+    .view-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .view-btn.active {
+      color: var(--text);
+      background: rgba(255,255,255,.12);
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.055);
+      cursor: pointer;
+      transition: background .18s ease, color .18s ease, transform .18s ease, border-color .18s ease;
+    }
+
+    .chip:hover,
+    .chip.active {
+      color: var(--text);
+      background: rgba(124, 58, 237, .22);
+      border-color: rgba(196, 181, 253, .4);
+      transform: translateY(-1px);
+    }
+
+    .file-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .file-grid.list {
+      grid-template-columns: 1fr;
+    }
+
+    .file-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 190px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      overflow: hidden;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+
+    .file-grid.list .file-card {
+      min-height: unset;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .file-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,.24);
+    }
+
+    .file-icon {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      font-size: 22px;
+      background: linear-gradient(135deg, rgba(124,58,237,.34), rgba(34,211,238,.18));
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .file-main {
+      min-width: 0;
+    }
+
+    .file-name {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 850;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .file-desc {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .meta {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 9px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255,255,255,.07);
+      font-size: 12px;
+    }
+
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 14px;
+      color: #06101f;
+      background: linear-gradient(135deg, #ffffff, #a5f3fc);
+      font-weight: 850;
+      white-space: nowrap;
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .open-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .empty-state {
+      display: none;
+      padding: 48px 18px;
+      text-align: center;
+      border: 1px dashed rgba(255,255,255,.2);
+      border-radius: var(--radius-lg);
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .footer {
+      margin-top: 26px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .file-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 22px, var(--max-width));
+        padding-top: 14px;
+      }
+
+      .hero,
+      .panel {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .github-link {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats,
+      .toolbar,
+      .file-grid,
+      .file-grid.list .file-card {
+        grid-template-columns: 1fr;
+      }
+
+      .file-grid.list .file-card {
+        align-items: stretch;
+      }
+
+      h1 {
+        font-size: clamp(36px, 12vw, 54px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">GH</div>
+          <div>
+            <p class="brand-title">Stan Project's Home</p>
+            <p class="brand-subtitle" id="repoName">My Repository</p>
+          </div>
+        </div>
+
+        <a class="github-link" id="githubLink" href="#" target="_blank" rel="noreferrer">
+          <span>Open GitHub</span>
+          <span>↗</span>
+        </a>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <h1><span class="gradient-text">Stan Project's</span><br />Home</h1>
+          <p class="hero-copy">
+            Подреден, responsive и удобен file browser за твоя GitHub проект — с търсачка, категории, сортиране и бързи линкове към файловете.
+          </p>
+        </div>
+
+        <div class="stats" aria-label="Project statistics">
+          <div class="stat-card">
+            <span class="stat-value" id="totalFiles">0</span>
+            <span class="stat-label">Общо файлове</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="visibleFiles">0</span>
+            <span class="stat-label">Показани</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="totalTypes">0</span>
+            <span class="stat-label">Типове файлове</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="lastUpdated">—</span>
+            <span class="stat-label">Последен update</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Files section">
+      <div class="toolbar">
+        <label class="field" aria-label="Search files">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m21 21-4.35-4.35" />
+            <circle cx="11" cy="11" r="7" />
+          </svg>
+          <input class="input" id="searchInput" type="search" placeholder="Търси файл, папка или разширение..." />
+        </label>
+
+        <select class="select" id="typeFilter" aria-label="Filter by type">
+          <option value="all">Всички типове</option>
+        </select>
+
+        <select class="select" id="sortSelect" aria-label="Sort files">
+          <option value="name-asc">Име A → Z</option>
+          <option value="name-desc">Име Z → A</option>
+          <option value="type-asc">Тип A → Z</option>
+          <option value="path-asc">Папка A → Z</option>
+        </select>
+
+        <div class="view-toggle" aria-label="View switcher">
+          <button class="view-btn active" id="gridView" type="button">Grid</button>
+          <button class="view-btn" id="listView" type="button">List</button>
+        </div>
+      </div>
+
+      <div class="chips" id="quickFilters" aria-label="Quick filters"></div>
+
+      <div class="file-grid" id="fileGrid"></div>
+
+      <div class="empty-state" id="emptyState">
+        <strong>Няма намерени файлове</strong>
+        Пробвай с по-кратко търсене или премахни филтрите.
+      </div>
+    </section>
+
+    <p class="footer">Built as a clean static GitHub file index. Работи отлично с Cloudflare static deploy.</p>
+  </main>
+
+  <script>
+    /*
+      HOW TO USE:
+      1) Replace REPO_OWNER and REPO_NAME below.
+      2) Replace FILES with your real files, or generate this array automatically.
+      3) Put this file as /public/index.html and deploy with Cloudflare.
+    */
+
+    const REPO_OWNER = "stanimir559-bit";
+    const REPO_NAME = "projects_1";
+    const BRANCH = "main";
+
+    const FILES = [
+      {
+        name: "Inflation Europe Dashboard",
+        path: "inflation-europe-dashboard.html",
+        type: "html",
+        description: "Интерактивен HTML dashboard с визуализации и executive summary."
+      },
+      {
+        name: "README",
+        path: "README.md",
+        type: "md",
+        description: "Основна документация за проекта."
+      },
+      {
+        name: "Styles",
+        path: "assets/styles.css",
+        type: "css",
+        description: "Главен stylesheet за custom дизайн."
+      },
+      {
+        name: "Main Script",
+        path: "assets/app.js",
+        type: "js",
+        description: "JavaScript логика за интерактивност."
+      },
+      {
+        name: "Data Export",
+        path: "data/export.json",
+        type: "json",
+        description: "Примерен JSON файл с данни."
+      }
+    ];
+
+    const ICONS = {
+      html: "🌐",
+      css: "🎨",
+      js: "⚡",
+      json: "🧩",
+      md: "📝",
+      pdf: "📄",
+      xlsx: "📊",
+      csv: "📈",
+      png: "🖼️",
+      jpg: "🖼️",
+      jpeg: "🖼️",
+      svg: "✨",
+      folder: "📁",
+      other: "📦"
+    };
+
+    const state = {
+      search: "",
+      type: "all",
+      sort: "name-asc",
+      view: "grid",
+      quick: "all"
+    };
+
+    const repoUrl = `https://github.com/${REPO_OWNER}/${REPO_NAME}`;
+    const rawBaseUrl = `https://${REPO_OWNER}.github.io/${REPO_NAME}/`;
+    const githubFileBaseUrl = `${repoUrl}/blob/${BRANCH}/`;
+
+    const els = {
+      repoName: document.getElementById("repoName"),
+      githubLink: document.getElementById("githubLink"),
+      totalFiles: document.getElementById("totalFiles"),
+      visibleFiles: document.getElementById("visibleFiles"),
+      totalTypes: document.getElementById("totalTypes"),
+      lastUpdated: document.getElementById("lastUpdated"),
+      searchInput: document.getElementById("searchInput"),
+      typeFilter: document.getElementById("typeFilter"),
+      sortSelect: document.getElementById("sortSelect"),
+      quickFilters: document.getElementById("quickFilters"),
+      fileGrid: document.getElementById("fileGrid"),
+      emptyState: document.getElementById("emptyState"),
+      gridView: document.getElementById("gridView"),
+      listView: document.getElementById("listView")
+    };
+
+    function getExtension(file) {
+      return (file.type || file.path.split(".").pop() || "other").toLowerCase();
+    }
+
+    function getOpenUrl(file) {
+      const ext = getExtension(file);
+      if (["html", "pdf", "png", "jpg", "jpeg", "svg"].includes(ext)) {
+        return rawBaseUrl + file.path;
+      }
+      return githubFileBaseUrl + file.path;
+    }
+
+    function formatType(type) {
+      return type.toUpperCase();
+    }
+
+    function setupMeta() {
+      els.repoName.textContent = `${REPO_OWNER}/${REPO_NAME}`;
+      els.githubLink.href = repoUrl;
+      els.totalFiles.textContent = FILES.length;
+      els.totalTypes.textContent = new Set(FILES.map(getExtension)).size;
+      els.lastUpdated.textContent = new Date().toLocaleDateString("bg-BG", {
+        day: "2-digit",
+        month: "short"
+      });
+    }
+
+    function setupFilters() {
+      const types = [...new Set(FILES.map(getExtension))].sort();
+
+      types.forEach(type => {
+        const option = document.createElement("option");
+        option.value = type;
+        option.textContent = formatType(type);
+        els.typeFilter.appendChild(option);
+      });
+
+      const priority = ["all", "html", "pdf", "xlsx", "md", "js", "css", "json"];
+      const chips = priority.filter(type => type === "all" || types.includes(type));
+
+      els.quickFilters.innerHTML = chips.map(type => `
+        <button class="chip ${type === "all" ? "active" : ""}" type="button" data-type="${type}">
+          <span>${type === "all" ? "⭐" : ICONS[type] || ICONS.other}</span>
+          <span>${type === "all" ? "Всички" : formatType(type)}</span>
+        </button>
+      `).join("");
+    }
+
+    function getFilteredFiles() {
+      const query = state.search.trim().toLowerCase();
+      let result = FILES.filter(file => {
+        const ext = getExtension(file);
+        const searchable = `${file.name} ${file.path} ${ext} ${file.description || ""}`.toLowerCase();
+        const matchesSearch = !query || searchable.includes(query);
+        const matchesType = state.type === "all" || ext === state.type;
+        return matchesSearch && matchesType;
+      });
+
+      result.sort((a, b) => {
+        const extA = getExtension(a);
+        const extB = getExtension(b);
+
+        switch (state.sort) {
+          case "name-desc":
+            return b.name.localeCompare(a.name);
+          case "type-asc":
+            return extA.localeCompare(extB) || a.name.localeCompare(b.name);
+          case "path-asc":
+            return a.path.localeCompare(b.path);
+          case "name-asc":
+          default:
+            return a.name.localeCompare(b.name);
+        }
+      });
+
+      return result;
+    }
+
+    function renderFiles() {
+      const files = getFilteredFiles();
+      els.visibleFiles.textContent = files.length;
+      els.fileGrid.classList.toggle("list", state.view === "list");
+      els.emptyState.style.display = files.length ? "none" : "block";
+
+      els.fileGrid.innerHTML = files.map(file => {
+        const ext = getExtension(file);
+        const icon = ICONS[ext] || ICONS.other;
+        const openUrl = getOpenUrl(file);
+        const folder = file.path.includes("/") ? file.path.split("/").slice(0, -1).join("/") : "root";
+
+        return `
+          <article class="file-card">
+            <div class="file-icon" aria-hidden="true">${icon}</div>
+            <div class="file-main">
+              <h2 class="file-name">${escapeHtml(file.name)}</h2>
+              <p class="file-desc">${escapeHtml(file.description || file.path)}</p>
+              <div class="meta-row">
+                <span class="meta">${formatType(ext)}</span>
+                <span class="meta">${escapeHtml(folder)}</span>
+              </div>
+            </div>
+            <a class="open-btn" href="${openUrl}" target="_blank" rel="noreferrer">
+              Open ↗
+            </a>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function bindEvents() {
+      els.searchInput.addEventListener("input", event => {
+        state.search = event.target.value;
+        renderFiles();
+      });
+
+      els.typeFilter.addEventListener("change", event => {
+        state.type = event.target.value;
+        updateActiveChip(state.type);
+        renderFiles();
+      });
+
+      els.sortSelect.addEventListener("change", event => {
+        state.sort = event.target.value;
+        renderFiles();
+      });
+
+      els.quickFilters.addEventListener("click", event => {
+        const chip = event.target.closest(".chip");
+        if (!chip) return;
+
+        state.type = chip.dataset.type;
+        els.typeFilter.value = state.type;
+        updateActiveChip(state.type);
+        renderFiles();
+      });
+
+      els.gridView.addEventListener("click", () => setView("grid"));
+      els.listView.addEventListener("click", () => setView("list"));
+    }
+
+    function setView(view) {
+      state.view = view;
+      els.gridView.classList.toggle("active", view === "grid");
+      els.listView.classList.toggle("active", view === "list");
+      renderFiles();
+    }
+
+    function updateActiveChip(type) {
+      document.querySelectorAll(".chip").forEach(chip => {
+        chip.classList.toggle("active", chip.dataset.type === type);
+      });
+    }
+
+    setupMeta();
+    setupFilters();
+    bindEvents();
+    renderFiles();
+  </script>
+</body>
+</html>
