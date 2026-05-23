@@ -3887,6 +3887,21 @@ maplibre-gl/dist/maplibre-gl.js:
 window.Plotly = Plotly;
 return Plotly;
 }));
+
+
+// Disable Plotly zoom/pan gestures after rendering so mobile scrolling stays natural.
+function lockChartInteractions() {
+  document.querySelectorAll('.js-plotly-plot').forEach((el) => {
+    try {
+      Plotly.relayout(el, {dragmode: false});
+      el.onwheel = null;
+      el.addEventListener('wheel', (event) => event.stopPropagation(), {passive: true});
+    } catch (e) {}
+  });
+}
+window.addEventListener('load', lockChartInteractions);
+window.addEventListener('resize', () => setTimeout(lockChartInteractions, 150));
+
 </script>
 <style>
 :root {
@@ -4293,6 +4308,20 @@ section > .callout + .grid,
   .card { box-shadow:none; break-inside: avoid; border-color:#d1d5db; background:white; color:#111827; }
   p, td, .note, .kpi-note { color:#374151; }
 }
+
+
+/* Mobile-friendly Plotly: allow vertical page scrolling over charts and remove zoom/pan affordances. */
+.js-plotly-plot,
+.js-plotly-plot .plotly,
+.js-plotly-plot .main-svg,
+.js-plotly-plot .draglayer,
+.js-plotly-plot .nsewdrag,
+.js-plotly-plot .drag,
+.js-plotly-plot .zoomlayer {
+  touch-action: pan-y !important;
+}
+.js-plotly-plot .modebar { display: none !important; }
+
 </style>
 </head>
 <body>
@@ -4513,8 +4542,14 @@ const plotConfig = {
   responsive: true,
   displayModeBar: false,
   scrollZoom: false,
-  doubleClick: 'reset',
-  displaylogo: false
+  doubleClick: false,
+  editable: false,
+  displaylogo: false,
+  modeBarButtonsToRemove: [
+    'zoom2d', 'pan2d', 'select2d', 'lasso2d',
+    'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
+    'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines'
+  ]
 };
 
 const plotLayout = (title, ytitle='%', extra={}) => Object.assign({
@@ -4528,6 +4563,7 @@ const plotLayout = (title, ytitle='%', extra={}) => Object.assign({
   yaxis: {title: ytitle, gridcolor:'rgba(148,163,184,.16)', zerolinecolor:'rgba(203,213,225,.28)', tickfont:{color:'#e0f2fe'}, titlefont:{color:'#cbd5e1'}},
   legend: {orientation:'h', y:-.2, font:{color:'#f8fafc'}, bgcolor:'rgba(0,0,0,0)'},
   hovermode: 'x unified',
+  dragmode: false,
   hoverlabel: {
     bgcolor: 'rgba(10,18,32,.98)',
     bordercolor: 'rgba(203,213,225,.32)',
@@ -4633,6 +4669,21 @@ makeTable('widerTable', widerEurope);
 
 window.addEventListener('resize', () => document.querySelectorAll('.chart').forEach(el => Plotly.Plots.resize(el)));
 window.addEventListener('load', () => setTimeout(() => document.querySelectorAll('.chart').forEach(el => Plotly.Plots.resize(el)), 150));
+
+
+// Disable Plotly zoom/pan gestures after rendering so mobile scrolling stays natural.
+function lockChartInteractions() {
+  document.querySelectorAll('.js-plotly-plot').forEach((el) => {
+    try {
+      Plotly.relayout(el, {dragmode: false});
+      el.onwheel = null;
+      el.addEventListener('wheel', (event) => event.stopPropagation(), {passive: true});
+    } catch (e) {}
+  });
+}
+window.addEventListener('load', lockChartInteractions);
+window.addEventListener('resize', () => setTimeout(lockChartInteractions, 150));
+
 </script>
 </body>
 </html>
