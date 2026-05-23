@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Красив индекс на файловете в GitHub repository." />
-  <title>Stan Project's Home</title>
+  <title>index</title>
 
   <style>
     :root {
@@ -620,38 +620,7 @@
     const REPO_NAME = "projects_1";
     const BRANCH = "main";
 
-    const FILES = [
-      {
-        name: "Inflation Europe Dashboard",
-        path: "inflation-europe-dashboard.html",
-        type: "html",
-        description: "Интерактивен HTML dashboard с визуализации и executive summary."
-      },
-      {
-        name: "README",
-        path: "README.md",
-        type: "md",
-        description: "Основна документация за проекта."
-      },
-      {
-        name: "Styles",
-        path: "assets/styles.css",
-        type: "css",
-        description: "Главен stylesheet за custom дизайн."
-      },
-      {
-        name: "Main Script",
-        path: "assets/app.js",
-        type: "js",
-        description: "JavaScript логика за интерактивност."
-      },
-      {
-        name: "Data Export",
-        path: "data/export.json",
-        type: "json",
-        description: "Примерен JSON файл с данни."
-      }
-    ];
+    const FILES = [];
 
     const ICONS = {
       html: "🌐",
@@ -861,10 +830,53 @@
       });
     }
 
-    setupMeta();
-    setupFilters();
-    bindEvents();
-    renderFiles();
+    async function loadGitHubFiles() {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`
+        );
+
+        const data = await response.json();
+
+        if (!data.tree) {
+          throw new Error("Unable to load repository tree.");
+        }
+
+        FILES.length = 0;
+
+        data.tree
+          .filter(item => item.type === "blob")
+          .forEach(item => {
+            const extension = item.path.includes(".")
+              ? item.path.split(".").pop().toLowerCase()
+              : "other";
+
+            FILES.push({
+              name: item.path.split("/").pop(),
+              path: item.path,
+              type: extension,
+              description: `GitHub repository file • ${extension.toUpperCase()}`
+            });
+          });
+
+        setupMeta();
+        setupFilters();
+        bindEvents();
+        renderFiles();
+      } catch (error) {
+        console.error(error);
+
+        els.fileGrid.innerHTML = `
+          <div style="padding:32px;border:1px solid rgba(255,255,255,.15);border-radius:20px;background:rgba(255,255,255,.05)">
+            <h2 style="margin-top:0">GitHub API Error</h2>
+            <p style="color:#a8b3cf">Could not automatically load repository files.</p>
+            <p style="color:#a8b3cf">Check repository visibility, branch name or GitHub API rate limits.</p>
+          </div>
+        `;
+      }
+    }
+
+    loadGitHubFiles();
   </script>
 </body>
 </html>
