@@ -543,7 +543,7 @@
         <div>
           <h1><span class="gradient-text">Stan Project's</span><br />Home</h1>
           <p class="hero-copy">
-            Подреден, responsive и удобен file browser за твоя GitHub проект — с търсачка, категории, сортиране и бързи линкове към файловете.
+            Красив и автоматичен HTML showcase за твоите GitHub проекти — показва само HTML файловете в repository-то, с търсачка, сортиране и модерен responsive дизайн.
           </p>
         </div>
 
@@ -579,7 +579,7 @@
         </label>
 
         <select class="select" id="typeFilter" aria-label="Filter by type">
-          <option value="all">Всички типове</option>
+          <option value="all">HTML файлове</option>
         </select>
 
         <select class="select" id="sortSelect" aria-label="Sort files">
@@ -845,7 +845,12 @@
         FILES.length = 0;
 
         data.tree
-          .filter(item => item.type === "blob")
+          .filter(item => {
+            const lower = item.path.toLowerCase();
+            return item.type === "blob"
+              && lower.endsWith(".html")
+              && !lower.endsWith("index.html");
+          })
           .forEach(item => {
             const extension = item.path.includes(".")
               ? item.path.split(".").pop().toLowerCase()
