@@ -17,3 +17,5 @@ doc=SM.apply(doc,SM.reverse(doc,false,'Judge'));assert.equal(doc.data.season.clo
 const reset=SM.fresh();reset.season=SM.clone(s);doc=SM.apply(doc,SM.operation(doc,[{path:['data'],next:reset}],'Next round'));assert.equal(doc.data.season.competitions.length,2);doc=SM.apply(doc,SM.reverse(doc,false,'Judge'));assert.equal(doc.data.id,'r1');
 console.log('PASS season: fixed scale, annual ties/countback, round correction, ties average, DQ, absence, stable identity, duplicate mapping, incomplete/nested rounds, scale validation, public projection, undo and next round retention');
 
+
+const noWinner=SM.clone(s);noWinner.closed=true;noWinner.competitions.forEach(c=>c.entries.forEach(e=>e.status='dns'));assert.throws(()=>SM.validateSeason(noWinner),/NO_SEASON_WINNER/);console.log('PASS no annual champion from an empty or all-DNS/DQ points table');
