@@ -75,10 +75,11 @@ function eventScores(d,e){
  rows.forEach(r=>{if(r.result&&r.points===null)r.points=0;});
  return rows.sort((a,b)=>(a.rank??999)-(b.rank??999)||a.athlete.bib-b.athlete.bib);
 }
-function standings(d){
- const scores=d.events.map(e=>eventScores(d,e));const rows=d.athletes.map(a=>({athlete:a,events:scores.map(s=>s.find(r=>r.athlete.id===a.id)),total:0}));
+function standings(d,through=d.events.length){
+ const events=d.events.slice(0,Math.max(0,Math.min(d.events.length,through)));
+ const scores=events.map(e=>eventScores(d,e));const rows=d.athletes.map(a=>({athlete:a,events:scores.map(s=>s.find(r=>r.athlete.id===a.id)),total:0}));
  rows.forEach(r=>{r.total=round(r.events.reduce((s,e)=>s+(e.points||0),0));r.countback=Array.from({length:d.athletes.length},(_,i)=>r.events.filter(e=>e.rank===i+1).length);});
- const cmp=(a,b)=>{if(a.total!==b.total)return b.total-a.total;if(d.rules.tie==='countback')return compare(a.countback,b.countback);if(d.rules.tie==='last'){const ar=a.events.at(-1),br=b.events.at(-1);return (ar?.rank??999)-(br?.rank??999);}return 0;};
+ const cmp=(a,b)=>{if(a.total!==b.total)return b.total-a.total;if(d.rules.tie==='countback')return compare(a.countback,b.countback);if(d.rules.tie==='last'&&events.length===d.events.length){const ar=a.events.at(-1),br=b.events.at(-1);return (ar?.rank??999)-(br?.rank??999);}return 0;};
  rows.sort((a,b)=>cmp(a,b)||a.athlete.bib-b.athlete.bib);rows.forEach((r,i)=>{r.rank=i&&!cmp(rows[i-1],r)?rows[i-1].rank:i+1;r.tied=rows.some(other=>other!==r&&!cmp(r,other));});return rows;
 }
 const api={clone,uid,round,number,time,modes,fresh,document,get,operation,apply,reverse,validate,validateResult,key,compare,zero,eventScores,standings};
