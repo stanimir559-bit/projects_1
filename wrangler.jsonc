@@ -1,13 +1,25 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "projects",
-  "compatibility_date": "2026-05-23",
   "observability": {
     "enabled": true
   },
+  "compatibility_date": "2026-05-23",
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": "strongman-worker.mjs",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/strongman/api/*"
+    ]
   },
+  "name": "projects",
+  "d1_databases": [
+    {
+      "database_id": "d9885a16-d9cd-4a0d-a7c4-69ec5b459aa8",
+      "binding": "SM_DB",
+      "database_name": "strongman-scores"
+    }
+  ],
   "compatibility_flags": [
     "nodejs_compat"
   ]
