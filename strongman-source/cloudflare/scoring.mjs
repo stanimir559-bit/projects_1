@@ -31,6 +31,8 @@ function validate(d){
  const ids=new Set();for(const a of d.athletes){if(!a.id||ids.has(a.id)||typeof a.name!=='string'||!a.name.trim()||a.name.length>150)throw Error('INVALID_ATHLETE');ids.add(a.id);}
  const eids=new Set();for(const e of d.events){if(!e.id||eids.has(e.id)||!modes.includes(e.mode)||!e.names||typeof e.names.bg!=='string'||typeof e.names.en!=='string'||!['none','all','finishers'].includes(e.secondary)||!Number.isFinite(e.target)||e.target<0||!Number.isFinite(e.cap)||e.cap<0)throw Error('INVALID_EVENT');eids.add(e.id);}
  for(const [eid,rr] of Object.entries(d.results)){const e=d.events.find(x=>x.id===eid);if(!e)throw Error('INVALID_EVENT_RESULT');for(const [aid,r]of Object.entries(rr)){if(!ids.has(aid))throw Error('INVALID_ATHLETE_RESULT');validateResult(e,r);}}
+ if(d.audience!==undefined&&(!d.audience||typeof d.audience.enabled!=='boolean'))throw Error('INVALID_AUDIENCE');
+ if(d.season!==undefined&&d.season!==null)validateSeason(d.season);
  return true;
 }
 function validateResult(e,r){
@@ -82,7 +84,22 @@ function standings(d,through=d.events.length){
  const cmp=(a,b)=>{if(a.total!==b.total)return b.total-a.total;if(d.rules.tie==='countback')return compare(a.countback,b.countback);if(d.rules.tie==='last'&&events.length===d.events.length){const ar=a.events.at(-1),br=b.events.at(-1);return (ar?.rank??999)-(br?.rank??999);}return 0;};
  rows.sort((a,b)=>cmp(a,b)||a.athlete.bib-b.athlete.bib);rows.forEach((r,i)=>{r.rank=i&&!cmp(rows[i-1],r)?rows[i-1].rank:i+1;r.tied=rows.some(other=>other!==r&&!cmp(r,other));});return rows;
 }
-const api={clone,uid,round,number,time,modes,fresh,document,get,operation,apply,reverse,validate,validateResult,key,compare,zero,eventScores,standings};
+function seasonFresh(){return {id:uid(),title:'',year:new Date().getFullYear(),scale:[25,20,16,13,11,10,9,8,7,6,5,4,3,2,1],tie:'countback',closed:false,athletes:[],competitions:[]};}
+function competitionSnapshot(d){const out={};for(const k of ['schema','id','title','date','venue','athletes','events','results','rules','phase'])out[k]=clone(d[k]);return out;}
+function validateSeason(s){
+ if(!s||typeof s.id!=='string'||typeof s.title!=='string'||!s.title.trim()||s.title.length>150||!Number.isInteger(s.year)||s.year<2000||s.year>2200||!['countback','shared'].includes(s.tie)||typeof s.closed!=='boolean'||!Array.isArray(s.scale)||!s.scale.length||s.scale.length>150||s.scale.some((v,i)=>!Number.isFinite(v)||v<0||i>0&&v>s.scale[i-1])||s.scale[0]<=0||!Array.isArray(s.athletes)||s.athletes.length>500||!Array.isArray(s.competitions)||s.competitions.length>40)throw Error('INVALID_SEASON');
+ const ids=new Set();for(const a of s.athletes){if(typeof a.id!=='string'||!a.id||ids.has(a.id)||typeof a.name!=='string'||!a.name.trim()||a.name.length>150)throw Error('INVALID_SEASON_ATHLETE');ids.add(a.id);}
+ const rounds=new Set();for(const c of s.competitions){if(!c||c.id!==c.data?.id||rounds.has(c.id)||Object.hasOwn(c.data,'season')||Object.hasOwn(c.data,'audience'))throw Error('INVALID_ROUND');rounds.add(c.id);validate(c.data);if(c.data.phase!=='finished'||!c.data.events.length||!c.data.athletes.length||!c.data.events.every(e=>c.data.athletes.every(a=>c.data.results[e.id]?.[a.id])))throw Error('UNFINISHED_ROUND');if(!Array.isArray(c.entries)||c.entries.length!==c.data.athletes.length)throw Error('INVALID_ENTRIES');const seen=new Set(),local=new Set();for(const e of c.entries){if(!ids.has(e.seasonId)||seen.has(e.seasonId)||local.has(e.athleteId)||!c.data.athletes.some(a=>a.id===e.athleteId)||!['ranked','dns','dq'].includes(e.status))throw Error('INVALID_ENTRIES');seen.add(e.seasonId);local.add(e.athleteId);}}
+ return true;
+}
+function seasonScores(s){
+ const perRound=s.competitions.map(c=>{const standingsRows=standings(c.data);return c.entries.map(entry=>{const row=standingsRows.find(r=>r.athlete.id===entry.athleteId);let points=0;if(entry.status==='ranked'){const tied=standingsRows.filter(r=>r.rank===row.rank).length;for(let i=row.rank-1;i<row.rank-1+tied;i++)points+=s.scale[i]||0;points=round(points/tied);}return {...entry,rank:row.rank,points,total:row.total};});});
+ const rows=s.athletes.map(a=>{const rounds=perRound.map(rr=>rr.find(r=>r.seasonId===a.id)||null);return {athlete:a,rounds,total:round(rounds.reduce((sum,r)=>sum+(r?.points||0),0)),starts:rounds.filter(r=>r&&r.status==='ranked').length,countback:Array.from({length:150},(_,i)=>rounds.filter(r=>r?.status==='ranked'&&r.rank===i+1).length)};}).filter(r=>r.rounds.some(Boolean));
+ const cmp=(a,b)=>b.total-a.total||(s.tie==='countback'?compare(a.countback,b.countback):0);rows.sort((a,b)=>cmp(a,b)||a.athlete.name.localeCompare(b.athlete.name));rows.forEach((r,i)=>{r.rank=i&&!cmp(rows[i-1],r)?rows[i-1].rank:i+1;r.tied=rows.some(other=>other!==r&&!cmp(r,other));});return rows;
+}
+function publicCompetition(d){const out=competitionSnapshot(d);out.rules={tie:d.rules.tie,zero:d.rules.zero};out.athletes=out.athletes.map(a=>({id:a.id,bib:a.bib,name:a.name}));out.events=out.events.map(e=>({id:e.id,names:{bg:e.names.bg,en:e.names.en},mode:e.mode,target:e.target,cap:e.cap,secondary:e.secondary}));const allowed=['status','penalty','deduction','reps','time','distance','weight','count','partial','height','misses','totalMisses','heavy','medium','light','placing'];out.results={};for(const e of out.events){out.results[e.id]={};for(const a of out.athletes){const r=d.results[e.id]?.[a.id];if(r){const clean={};for(const k of allowed)if(r[k]!==undefined)clean[k]=r[k];out.results[e.id][a.id]=clean;}}}return out;}
+function publicState(d){const out={competition:publicCompetition(d),season:null};if(d.season){const s=d.season;out.season={id:s.id,title:s.title,year:s.year,scale:clone(s.scale),tie:s.tie,closed:s.closed,athletes:s.athletes.map(a=>({id:a.id,name:a.name})),competitions:s.competitions.map(c=>({id:c.id,data:publicCompetition(c.data),entries:c.entries.map(e=>({athleteId:e.athleteId,seasonId:e.seasonId,status:e.status}))}))};}return out;}
+const api={clone,uid,round,number,time,modes,fresh,document,get,operation,apply,reverse,validate,validateResult,key,compare,zero,eventScores,standings,seasonFresh,competitionSnapshot,validateSeason,seasonScores,publicState};
 root.SM=api;
 })(typeof window!=='undefined'?window:globalThis);
 

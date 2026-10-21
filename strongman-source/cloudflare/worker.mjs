@@ -29,9 +29,13 @@ async function store(db,next,previous){
 }
 export async function handleAPI(request,env){
  if(request.method==='OPTIONS')return reply(204);
+ const endpoint=new URL(request.url).pathname.slice(PREFIX.length);
+ if(request.method==='GET'&&endpoint==='viewer'){
+ if(!env.SM_DB)return reply(503,{error:'NOT_CONFIGURED'});
+ try{const db=env.SM_DB.withSession?env.SM_DB.withSession('first-primary'):env.SM_DB;const state=await load(db);if(!state?.doc.data.audience?.enabled)return reply(404,{error:'VIEWER_DISABLED'});const etag='"viewer-'+state.doc.revision+'"';if(request.headers.get('If-None-Match')===etag)return reply(304,null,{ETag:etag});return reply(200,{...SM.publicState(state.doc.data),revision:state.doc.revision},{ETag:etag});}catch{return reply(503,{error:'UNAVAILABLE'});}
+ }
  if(!env.SM_DB||!env.SM_KEY||env.SM_KEY.length<16)return reply(503,{error:'NOT_CONFIGURED',message:'Set the SM_DB D1 binding, run schema.sql and add a 16+ character SM_KEY secret in Cloudflare.'});
  if(!await authorised(request,env.SM_KEY))return reply(401,{error:'UNAUTHORIZED'});
- const endpoint=new URL(request.url).pathname.slice(PREFIX.length);
  const db=env.SM_DB.withSession?env.SM_DB.withSession('first-primary'):env.SM_DB;
  try{
  if(request.method==='GET'&&endpoint==='state'){

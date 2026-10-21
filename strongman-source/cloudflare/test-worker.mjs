@@ -12,4 +12,13 @@ doc=(await (await handleAPI(req('state'),env)).json()).doc;assert.equal(doc.data
 assert.equal((await handleAPI(req('state',null,env.SM_KEY,{'If-None-Match':'"2"'}),env)).status,304);
 const large=SM.clone(doc.data);large.venue='Sofia';large.extraNotes='Тест '.repeat(350000);const op=SM.operation(doc,[{path:['data'],next:large}],'Large snapshot','Judge A');assert.equal((await handleAPI(req('op',op),env)).status,200);const loaded=(await (await handleAPI(req('state'),env)).json()).doc;assert.equal(loaded.data.extraNotes,large.extraNotes);assert.ok(sqlite.prepare('SELECT count(*) as n FROM sm_snapshots').get().n>1);assert.equal(sqlite.prepare('SELECT count(distinct snapshot) as n FROM sm_snapshots').get().n,1);
 const fallback=await worker.fetch(new Request('https://example.test/'),env);assert.equal(await fallback.text(),'existing hub');
+assert.equal((await handleAPI(req('viewer',null,''),env)).status,404);
+let latest=(await (await handleAPI(req('state'),env)).json()).doc;
+const enable=SM.operation(latest,[{path:['data','audience'],next:{enabled:true}}],'Publish','PRIVATE JUDGE');assert.equal((await handleAPI(req('op',enable),env)).status,200);
+const publicRes=await handleAPI(req('viewer',null,''),env);assert.equal(publicRes.status,200);const publicDoc=await publicRes.json();assert.equal(publicDoc.competition.title,'Shared tournament');assert.ok(!JSON.stringify(publicDoc).includes('PRIVATE'));assert.ok(!Object.hasOwn(publicDoc,'doc'));assert.ok(!Object.hasOwn(publicDoc,'log'));assert.ok(!Object.hasOwn(publicDoc.competition,'extraNotes'));
+assert.equal((await handleAPI(req('viewer',null,'',{'If-None-Match':publicRes.headers.get('ETag')}),env)).status,304);
+assert.equal((await handleAPI(req('op',enable,''),env)).status,401);
+assert.equal((await handleAPI(req('state',null,''),env)).status,401);
+latest=(await (await handleAPI(req('state'),env)).json()).doc;assert.equal((await handleAPI(req('op',SM.operation(latest,[{path:['data','audience','enabled'],next:false}],'Unpublish')),env)).status,200);assert.equal((await handleAPI(req('viewer',null,''),env)).status,404);
+console.log('PASS public viewer: explicit enable/disable, no access code, sanitized projection, separate ETag, judge endpoints remain authenticated');
 console.log('PASS Cloudflare handler: configuration/auth, init, concurrent CAS rebase, conflict, idempotency, ETag, multi-chunk Unicode snapshot, old-snapshot cleanup, existing hub passthrough');
