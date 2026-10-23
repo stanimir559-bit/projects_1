@@ -19,3 +19,4 @@ body[data-screen=scoring] .eventtabs button{display:flex;flex-direction:column;a
 .layout>div,.layout>aside,.runhead>div,.resultinput,.resultinput fieldset{min-width:0}.runhead h2{overflow-wrap:anywhere}.savebar button{min-width:0;line-height:1.2}.savebar button[type=submit]{flex:1 1 0}.savebar button.primary{flex:1.7 1 0}.savebar .undo-quick{min-width:46px}
 
 .field-context>div{min-width:0}.field-context small{display:block;color:var(--muted);font-size:.67rem;font-weight:400;margin-bottom:3px}.field-context strong{display:block}.field-context>span{align-self:center}
+@media print{:root,:root[data-theme]{color-scheme:light!important;--paper:#fff!important;--white:#fff!important;--ink:#000!important;--muted:#333!important;--line:#bbb!important;--surface-alt:#eee!important;--orange:#000!important;--green:#000!important}}
