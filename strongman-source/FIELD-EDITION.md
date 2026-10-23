@@ -32,3 +32,7 @@ The final missing athlete uses Save → overview. Once all results are saved, th
 ## 2.1.2 — totals without horizontal scrolling
 
 Overall standings show Total directly after the athlete name. Desktop tables wrap event names within fixed-width columns. Phones and larger event programmes use compact athlete rows with immediately visible totals and expandable per-event points. The scoring data and Word/CSV export formats are unchanged. 25 DOM scenarios pass.
+
+## 2.1.3 — visible new competition action
+
+Overview now places + New competition beside the competition status; More offers the same action directly. Confirmation downloads a JSON backup before replacing the active competition, preserves season rounds and publication settings, and warns connected judges that the replacement is shared. Pending unsynced changes block replacement. The new setup opens at the competition title. 28 DOM scenarios pass, including cancellation, backup contents, season preservation, reload, Undo and pending sync. A real browser check at 390px confirmed the action is visible without scrolling or horizontal overflow; the More confirmation was opened and canceled in an isolated test session.

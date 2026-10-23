@@ -26,3 +26,5 @@ Season/visitor update verification: 21 existing core tests plus dedicated season
 Event review follow-up (2.1.1): the UI suite now has 24 scenarios, including the full event-overview/cutoff-standings/next-event flow, refresh, correction, Undo and explicit final completion.
 
 2.1.2: 25 DOM scenarios; added coverage for visible total-column order, identical compact totals, missing event points and eight-event compact programmes.
+
+2.1.3: 28 DOM scenarios; added new-competition visibility/localization, cancellation, JSON backup contents, preserved season archive/publication, reload, Undo and pending-sync checks. Browser verified the overview action at 390px and the More confirmation using isolated test data.
