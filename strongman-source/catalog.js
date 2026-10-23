@@ -1,4 +1,5 @@
 const SOURCES=[
+ {id:'conandeg',name:'Giants Live — Conan’s Wheel results in degrees',url:'https://giants-live.com/news/world-records-tumble-as-hooper-dominates-at-the-albert-hall/'},
  {id:'wsm',name:'World’s Strongest Man — Events',url:'https://www.theworldsstrongestman.com/events/'},
  {id:'scl',name:'Strongman Champions League — Rules',url:'https://strongmancl.com/rules/'},
  {id:'world',name:'World Strongman — Competition System',url:'https://worldstrongman.org/competition-system/'},
@@ -30,7 +31,7 @@ const CATALOG=[
  ['duck','Патешко ходене','Duck walk','race','carry',['scl','arnold']],
  ['husafell','Камък Хусафел / щит — дистанция','Husafell stone / shield — distance','distance','carry',['scl','bg']],
  ['sanddist','Чувал — максимална дистанция','Sandbag carry — distance','distance','carry',['oct']],
- ['conan','Колелото на Конан — метри','Conan’s wheel — metres','distance','carry',['scl']],
+ ['conan','Колелото на Конан — градуси','Conan’s wheel — degrees','distance','carry',['conandeg']],
  ['atlas','Камъни Атлас — серия','Atlas stones — series','series','load',['wsm','scl','bg']],
  ['loading','Товарене на снаряди','Loading race','series','load',['wsm','scl','arnold']],
  ['stonebar','Камък през летва — повторения','Stone over bar — reps','reps','load',['oct']],
@@ -68,4 +69,4 @@ const CATALOG=[
  ['curl','Стриктно сгъване — максимум','Strict curl — max','max','lift',['oct']],
  ['weighted','Набиране / кофички с тежест — максимум','Weighted pull-up / dip — max','max','lift',['oct']],
  ['custom','Собствена дисциплина / съдийски места','Custom event / referee placings','manual','mixed',['world']]
-].map(([id,bg,en,mode,group,sources])=>({id,names:{bg,en},mode,group,sources}));
+].map(([id,bg,en,mode,group,sources])=>({id,names:{bg,en},mode,group,sources,...(id==='conan'?{unit:'deg'}:{})}));

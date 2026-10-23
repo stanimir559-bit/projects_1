@@ -44,7 +44,7 @@ Arnold 2026 включва рамка за време, стълбица прес
 | 12 | Патешко ходене | Duck walk | Завършили по време; незавършили по метри | [scl](https://strongmancl.com/rules/), [arnold](https://strength.events/2026-arnold/) |
 | 13 | Камък Хусафел / щит — дистанция | Husafell stone / shield — distance | Най-голяма дистанция | [scl](https://strongmancl.com/rules/), [bg](https://www.strongmanbg.com/) |
 | 14 | Чувал — максимална дистанция | Sandbag carry — distance | Най-голяма дистанция | [oct](https://worldstrongman.org/standard-disciplines/) |
-| 15 | Колелото на Конан — метри | Conan’s wheel — metres | Най-голяма дистанция | [scl](https://strongmancl.com/rules/) |
+| 15 | Колелото на Конан — градуси | Conan’s wheel — degrees | Най-голям общ ъгъл в градуси (1 обиколка = 360°) | [Giants Live — official results](https://giants-live.com/news/world-records-tumble-as-hooper-dominates-at-the-albert-hall/) |
 | 16 | Камъни Атлас — серия | Atlas stones — series | Брой успешни снаряди/стъпки и избрано време | [wsm](https://www.theworldsstrongestman.com/events/), [scl](https://strongmancl.com/rules/), [bg](https://www.strongmanbg.com/) |
 | 17 | Товарене на снаряди | Loading race | Брой успешни снаряди/стъпки и избрано време | [wsm](https://www.theworldsstrongestman.com/events/), [scl](https://strongmancl.com/rules/), [arnold](https://strength.events/2026-arnold/) |
 | 18 | Камък през летва — повторения | Stone over bar — reps | Повторения | [oct](https://worldstrongman.org/standard-disciplines/) |
@@ -111,3 +111,6 @@ Season and visitors update: organizer-defined fixed place scale (default 25/20/1
 
 
 Проверка на 23.10.2026: Titan’s Turntable по WSM има цел 180°, а не универсално трасе в метри. Новият шаблон е за съдийски места. Съществуващи организаторски настройки не се променят автоматично. При пресова стълбица общият брой трябва да брои зачетените успехи, когато има повече повторения на уред. Максимални опити с тайбрек по брой опити се въвеждат чрез съдийски места; този тайбрек не е автоматизиран. N остава изричното правило на тази програма след заключване на списъка, а не универсална политика на всеки WSM турнир; предстартиралите отказвания се изясняват преди старта. Сезонната скала 25/20/16 остава организаторско предложение.
+
+
+23.10.2026 — корекция на Конан: шаблонът използва общ ъгъл в градуси, включително над 360°. Официалните резултати на Giants Live показват 1035°, 836° и равни 826°, с разделени точки: https://giants-live.com/news/world-records-tumble-as-hooper-dominates-at-the-albert-hall/. В други формати SCL е публикувала метри (https://strongmancl.com/world-records/), затова единицата е изрична настройка и старите записи не се преименуват автоматично. Няма автоматично преобразуване между дължина и ъгъл.
