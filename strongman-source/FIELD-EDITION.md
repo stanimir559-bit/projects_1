@@ -28,3 +28,7 @@ Lovable design workspace: https://lovable.dev/projects/1a69c402-ad0c-4f3c-8680-3
 ## 2.1.1 — review each event before advancing
 
 The final missing athlete uses Save → overview. Once all results are saved, the scoring continuation button opens the event overview without a duplicate save. The overview lists athlete performances, event places and points, with row-based correction. Continue opens provisional overall standings through that event only, followed by the next event. On the last event, finishing remains an explicit action after the review. Corrections validate before navigation; both review views survive refresh. Missing results after Undo block advancement. 24 DOM scenarios and 21 core checks pass; browser QA uses a six-athlete, four-event fixture.
+
+## 2.1.2 — totals without horizontal scrolling
+
+Overall standings show Total directly after the athlete name. Desktop tables wrap event names within fixed-width columns. Phones and larger event programmes use compact athlete rows with immediately visible totals and expandable per-event points. The scoring data and Word/CSV export formats are unchanged. 25 DOM scenarios pass.

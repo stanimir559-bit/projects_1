@@ -46,3 +46,9 @@ async function reviewAction(act,b){
  if(view==='scoring'&&['nextEvent','finish'].includes(act)&&complete(d().events[eventIndex])){openEventReview();return true;}
  return false;
 }
+
+function standingsResults(rows,events){
+ const totalLabel=t('total'),many=events.length>6;
+ const matrix=many?'':`<div class="standings-matrix-wrap"><table class="standings-matrix"><thead><tr><th class="standings-place">${t('place')}</th><th class="standings-athlete">${t('name')}</th><th class="standings-total">${totalLabel}</th>${events.map((e,i)=>`<th>${i+1}. ${esc(eventName(e))}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td class="rank ${r.rank===1?'top':''}">${r.tied?'=':''}${r.rank}</td><td class="name">${esc(r.athlete.name)}</td><td class="points standings-total">${fmt(r.total)}</td>${r.events.map(er=>`<td>${er.points===null?'—':fmt(er.points)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+ return matrix+`<div class="standings-compact ${many?'always-compact':''}"><div class="standings-summary-head"><span>${t('place')}</span><span>${t('name')}</span><span>${totalLabel}</span></div>${rows.map(r=>`<article class="standings-person"><div class="standings-summary-row"><span class="rank ${r.rank===1?'top':''}">${r.tied?'=':''}${r.rank}</span><strong>${esc(r.athlete.name)}</strong><span class="points">${fmt(r.total)}</span></div>${events.length?`<details><summary>${L('Точки по дисциплини','Points by event')}</summary><dl>${events.map((e,i)=>`<div><dt>${i+1}. ${esc(eventName(e))}</dt><dd>${r.events[i].points===null?'—':fmt(r.events[i].points)}</dd></div>`).join('')}</dl></details>`:''}</article>`).join('')}</div>`;
+}

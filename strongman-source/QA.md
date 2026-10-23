@@ -24,3 +24,5 @@ Season/visitor update verification: 21 existing core tests plus dedicated season
 23 October 2026 audit/redesign: see AUDIT.md and UX-RESEARCH.md. 21 core tests, season suite, 12 new data/security regressions, 18 contrast pairs, Node API tests, Cloudflare SQL/handler tests with 100 concurrent unchanged spectator polls, and 14 software DOM scenarios passed. Real browser exercised theme/input retention, missing-result queue, DNF, phone-width visitor profiles and Word downloads. DOCX totals verified: competition 3/2/1, season45/41/36. Native Word capture timed out and the window disappeared, so native visual Word layout remains unverified. No production private code or competition data used in test writes.
 
 Event review follow-up (2.1.1): the UI suite now has 24 scenarios, including the full event-overview/cutoff-standings/next-event flow, refresh, correction, Undo and explicit final completion.
+
+2.1.2: 25 DOM scenarios; added coverage for visible total-column order, identical compact totals, missing event points and eight-event compact programmes.

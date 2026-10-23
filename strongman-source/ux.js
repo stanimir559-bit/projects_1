@@ -7,7 +7,7 @@ function render(){
  $('#nav').innerHTML=items.map(([v,label])=>button(v==='scoring'?'resumeQueue':'nav',navIcon(v)+'<span>'+label+'</span>',activeView===v?'active':'',`data-view="${v}" ${activeView===v?'aria-current="page"':''}`)).join('')+button('more',navIcon('more')+'<span>'+L('Още','More')+'</span>',!items.some(([v])=>v===activeView)?'active':'','aria-haspopup="dialog"');
  if(standingsThrough>d().events.length)standingsThrough=-1;if(eventIndex>=d().events.length)eventIndex=Math.max(0,d().events.length-1);
  $('#main').innerHTML=({overview:overviewView,setup:setupView,scoring:scoringView,eventReview:eventReviewView,eventStandings:()=>standingsView(true),standings:standingsView,season:seasonView,history:historyView,guide:guideView,connect:connectView}[view]||overviewView)();
- if(view==='setup')setupFormBase=SM.clone(d());syncNotice();storageNotice();$('#footer').innerHTML='<span>STRONGMAN ARENA · FIELD EDITION · v2.1.1</span><span>'+t('precision')+'</span>';
+ if(view==='setup')setupFormBase=SM.clone(d());syncNotice();storageNotice();$('#footer').innerHTML='<span>STRONGMAN ARENA · FIELD EDITION · v2.1.2</span><span>'+t('precision')+'</span>';
  if(view==='scoring')restoreDraft();applySetupDraft();restoreSeasonDraft();
 }
 function setupView(){let html=baseSetupView();html=html.replace('Редът определя стартовите номера. Имената трябва да са различни.','Броят се изчислява автоматично от имената. Редът определя стартовите номера. Имената трябва да са различни.').replace('The order sets bib numbers. Names must be unique.','The athlete count follows the names automatically. The order sets bib numbers. Names must be unique.');
