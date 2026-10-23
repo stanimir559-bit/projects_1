@@ -77,7 +77,7 @@ Arnold 2026 включва рамка за време, стълбица прес
 | 45 | Хвърляне на пудовка — дистанция | Kettlebell throw — distance | Най-голяма дистанция | [ruse](https://www.uni-ruse.bg/university/NewsPaper/Студентска%20искра%20Бр.%20437.pdf) |
 | 46 | Носене и влачене — комбинирано | Carry and drag — medley | Етапи, частична дистанция, избрано време | [scl](https://strongmancl.com/rules/) |
 | 47 | Смесено трасе — етапи и частична дистанция | Mixed medley — stages and partial distance | Етапи, частична дистанция, избрано време | [world](https://worldstrongman.org/competition-system/), [arnold](https://strength.events/2026-arnold/) |
-| 48 | Колелото на титаните — трасе | Titan’s turntable — course | Завършили по време; незавършили по метри | [wsm](https://www.theworldsstrongestman.com/events/) |
+| 48 | Колелото на титаните — съдийски места | Titan’s turntable — referee placings | Съдийски места; ъглово трасе не се преобразува автоматично в метри | [WSM](https://www.theworldsstrongestman.com/events/titans-turntable/) |
 | 49 | Хват — максимум (Hub / Saxon / Excalibur) | Grip lift — max (Hub / Saxon / Excalibur) | Най-тежък валиден опит | [oct](https://worldstrongman.org/standard-disciplines/) |
 | 50 | Стриктно сгъване — максимум | Strict curl — max | Най-тежък валиден опит | [oct](https://worldstrongman.org/standard-disciplines/) |
 | 51 | Набиране / кофички с тежест — максимум | Weighted pull-up / dip — max | Най-тежък валиден опит | [oct](https://worldstrongman.org/standard-disciplines/) |
@@ -108,3 +108,6 @@ Arnold 2026 включва рамка за време, стълбица прес
 - [WA’s Strongest 2025 — official rules, pp. 2–6](https://static1.squarespace.com/static/627b2cf73b7cbf59aae529be/t/68b4ea39740c97376c821e47/1756686984874/WA%E2%80%99S%2B%2BSTRONGEST%2BMAN%2B%26%2BWOMAN%2B2025%2BOfficial%2BEvents%2C%2BRules%2B%26%2BWeights%2B-%2Bas%2Bat%2B30_08_2026.pdf)
 
 Season and visitors update: organizer-defined fixed place scale (default 25/20/16/13/11/10/.../1), all rounds count, ties average occupied places, season countback or shared ties, DNS/DQ zero with no place shifting, explicit stable identity mapping, update-in-place archives and reversible changes. SCL describes a different qualification/final mechanism: https://strongmancl.com/rules/ (checked 2026-10-21). This application's season scale is a configurable organizer proposal and is not attributed to SCL or a Bulgarian federation.
+
+
+Проверка на 23.10.2026: Titan’s Turntable по WSM има цел 180°, а не универсално трасе в метри. Новият шаблон е за съдийски места. Съществуващи организаторски настройки не се променят автоматично. При пресова стълбица общият брой трябва да брои зачетените успехи, когато има повече повторения на уред. Максимални опити с тайбрек по брой опити се въвеждат чрез съдийски места; този тайбрек не е автоматизиран. N остава изричното правило на тази програма след заключване на списъка, а не универсална политика на всеки WSM турнир; предстартиралите отказвания се изясняват преди старта. Сезонната скала 25/20/16 остава организаторско предложение.

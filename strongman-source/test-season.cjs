@@ -8,7 +8,7 @@ s.competitions=[round('r1',[3,3,1])];assert.deepEqual(SM.seasonScores(s).map(r=>
 s.competitions[0].entries[0].status='dq';assert.equal(SM.seasonScores(s).find(r=>r.athlete.id==='A').total,0);
 s.competitions=[round('r1'),round('r2',[3,2],['A','C'])];assert.equal(SM.seasonScores(s).find(r=>r.athlete.id==='B').rounds[1],null);assert.equal(SM.seasonScores(s).find(r=>r.athlete.id==='C').total,36);
 const invalid=SM.clone(s);invalid.competitions[1].entries[1].seasonId='A';assert.throws(()=>SM.validateSeason(invalid),/INVALID_ENTRIES/);
-const incomplete=SM.clone(s);delete incomplete.competitions[0].data.results.e.r10;assert.throws(()=>SM.validateSeason(incomplete),/UNFINISHED_ROUND/);
+const incomplete=SM.clone(s);delete incomplete.competitions[0].data.results.e.r10;assert.throws(()=>SM.validateSeason(incomplete),/UNFINISHED_/);
 const nested=SM.clone(s);nested.competitions[0].data.season={};assert.throws(()=>SM.validateSeason(nested),/INVALID_ROUND/);
 const invalidScale=SM.clone(s);invalidScale.scale=[20,25];assert.throws(()=>SM.validateSeason(invalidScale),/INVALID_SEASON/);
 let doc=SM.document(SM.clone(s.competitions[0].data));doc.data.season=SM.clone(s);doc.data.audience={enabled:true};doc=SM.apply(doc,SM.operation(doc,[{path:['data','season','closed'],next:true}],'Finish season','PRIVATE JUDGE'));

@@ -63,7 +63,7 @@ const CATALOG=[
  ['throwdist','Хвърляне на пудовка — дистанция','Kettlebell throw — distance','distance','throw',['ruse']],
  ['carrydrag','Носене и влачене — комбинирано','Carry and drag — medley','medley','mixed',['scl']],
  ['mixed','Смесено трасе — етапи и частична дистанция','Mixed medley — stages and partial distance','medley','mixed',['world','arnold']],
- ['turntable','Колелото на титаните — трасе','Titan’s turntable — course','race','mixed',['wsm']],
+ ['turntable','Колелото на титаните — съдийски места','Titan’s turntable — referee placings','manual','mixed',['wsm']],
  ['gripmax','Хват — максимум (Hub / Saxon / Excalibur)','Grip lift — max (Hub / Saxon / Excalibur)','max','lift',['oct']],
  ['curl','Стриктно сгъване — максимум','Strict curl — max','max','lift',['oct']],
  ['weighted','Набиране / кофички с тежест — максимум','Weighted pull-up / dip — max','max','lift',['oct']],

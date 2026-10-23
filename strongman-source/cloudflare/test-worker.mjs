@@ -1,12 +1,14 @@
 import {DatabaseSync} from 'node:sqlite';import fs from 'node:fs';import assert from 'node:assert/strict';import SM from './scoring.mjs';import worker,{handleAPI} from './worker.mjs';
 const sqlite=new DatabaseSync(':memory:');sqlite.exec(fs.readFileSync(new URL('./schema.sql',import.meta.url),'utf8'));
 class Statement{constructor(sql){this.sql=sql;this.args=[];}bind(...args){this.args=args;return this;}async first(){return sqlite.prepare(this.sql).get(...this.args)||null;}exec(){const statement=sqlite.prepare(this.sql);if(/^(SELECT|WITH)/i.test(this.sql))return {results:statement.all(...this.args),meta:{changes:0}};return {results:[],meta:{changes:statement.run(...this.args).changes}};}}
-const db={prepare:sql=>new Statement(sql),withSession(){return this;},async batch(statements){sqlite.exec('BEGIN');try{const result=statements.map(s=>s.exec());sqlite.exec('COMMIT');return result;}catch(err){sqlite.exec('ROLLBACK');throw err;}}};
+let batches=0;const db={prepare:sql=>new Statement(sql),withSession(){return this;},async batch(statements){batches++;sqlite.exec('BEGIN');try{const result=statements.map(s=>s.exec());sqlite.exec('COMMIT');return result;}catch(err){sqlite.exec('ROLLBACK');throw err;}}};
 const env={SM_DB:db,SM_KEY:'a-test-code-longer-than-sixteen',ASSETS:{fetch:async()=>new Response('existing hub')}};
 const req=(endpoint,body,key=env.SM_KEY,extra={})=>new Request('https://example.test/strongman/api/'+endpoint,{method:body?'POST':'GET',headers:{Authorization:'Bearer '+key,...extra},...(body?{body:JSON.stringify(body)}:{})});
 assert.equal((await handleAPI(req('state'),{})).status,503);assert.equal((await handleAPI(req('state',null,'bad'),env)).status,401);
+assert.equal((await handleAPI(req('init',{doc:{...SM.document(),revision:2}}),env)).status,400);
 let doc=SM.document();assert.equal((await handleAPI(req('init',{doc}),env)).status,200);assert.equal((await handleAPI(req('init',{doc}),env)).status,409);
 const a=SM.operation(doc,[{path:['data','title'],next:'Shared tournament'}],'Title','Judge A'),b=SM.operation(doc,[{path:['data','venue'],next:'Sofia'}],'Location','Judge B'),c=SM.operation(doc,[{path:['data','title'],next:'Overwrite'}],'Conflict','Judge C');
+const oldClient={...a};delete oldClient.competitionId;assert.equal((await handleAPI(req('op',oldClient),env)).status,409);
 const concurrent=await Promise.all([handleAPI(req('op',a),env),handleAPI(req('op',b),env)]);assert.deepEqual(concurrent.map(r=>r.status),[200,200]);assert.equal((await handleAPI(req('op',c),env)).status,409);assert.equal((await handleAPI(req('op',a),env)).status,200);
 doc=(await (await handleAPI(req('state'),env)).json()).doc;assert.equal(doc.data.title,'Shared tournament');assert.equal(doc.data.venue,'Sofia');assert.equal(doc.revision,2);assert.equal(doc.log.length,2);
 assert.equal((await handleAPI(req('state',null,env.SM_KEY,{'If-None-Match':'"2"'}),env)).status,304);
@@ -17,6 +19,7 @@ let latest=(await (await handleAPI(req('state'),env)).json()).doc;
 const enable=SM.operation(latest,[{path:['data','audience'],next:{enabled:true}}],'Publish','PRIVATE JUDGE');assert.equal((await handleAPI(req('op',enable),env)).status,200);
 const publicRes=await handleAPI(req('viewer',null,''),env);assert.equal(publicRes.status,200);const publicDoc=await publicRes.json();assert.equal(publicDoc.competition.title,'Shared tournament');assert.ok(!JSON.stringify(publicDoc).includes('PRIVATE'));assert.ok(!Object.hasOwn(publicDoc,'doc'));assert.ok(!Object.hasOwn(publicDoc,'log'));assert.ok(!Object.hasOwn(publicDoc.competition,'extraNotes'));
 assert.equal((await handleAPI(req('viewer',null,'',{'If-None-Match':publicRes.headers.get('ETag')}),env)).status,304);
+const beforeReads=batches;const spectators=await Promise.all(Array.from({length:100},()=>handleAPI(req('viewer',null,'',{'If-None-Match':publicRes.headers.get('ETag')}),env)));assert.ok(spectators.every(r=>r.status===304));assert.equal(batches,beforeReads);console.log('PASS 100 concurrent unchanged spectator polls without reloading snapshot/history');
 assert.equal((await handleAPI(req('op',enable,''),env)).status,401);
 assert.equal((await handleAPI(req('state',null,''),env)).status,401);
 latest=(await (await handleAPI(req('state'),env)).json()).doc;assert.equal((await handleAPI(req('op',SM.operation(latest,[{path:['data','audience','enabled'],next:false}],'Unpublish')),env)).status,200);assert.equal((await handleAPI(req('viewer',null,''),env)).status,404);

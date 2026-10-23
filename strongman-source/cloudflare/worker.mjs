@@ -1,5 +1,6 @@
 import SM from './scoring.mjs';
 const PREFIX='/strongman/api/';
+const viewerMemo=new WeakMap();
 const headers={
  'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',
  'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Authorization, Content-Type, If-None-Match',
@@ -7,6 +8,7 @@ const headers={
 };
 const reply=(status,body,extra={})=>new Response(status===304||status===204?null:JSON.stringify(body),{status,headers:{...headers,...extra}});
 async function authorised(request,key){if(!key||key.length<16)return false;const digest=async value=>new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(value)));const [a,b]=await Promise.all([digest(request.headers.get('Authorization')||''),digest('Bearer '+key)]);let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];return diff===0;}
+async function bodyText(request){const reader=request.body?.getReader();if(!reader)return '';const decoder=new TextDecoder(),parts=[];let size=0;for(;;){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>30000000){await reader.cancel();throw Error('TOO_LARGE');}parts.push(decoder.decode(value,{stream:true}));}parts.push(decoder.decode());return parts.join('');}
 async function load(db){
  const [head,chunks]=await db.batch([
  db.prepare('SELECT revision, snapshot FROM sm_head WHERE id = 1'),
@@ -32,7 +34,7 @@ export async function handleAPI(request,env){
  const endpoint=new URL(request.url).pathname.slice(PREFIX.length);
  if(request.method==='GET'&&endpoint==='viewer'){
  if(!env.SM_DB)return reply(503,{error:'NOT_CONFIGURED'});
- try{const db=env.SM_DB.withSession?env.SM_DB.withSession('first-primary'):env.SM_DB;const state=await load(db);if(!state?.doc.data.audience?.enabled)return reply(404,{error:'VIEWER_DISABLED'});const etag='"viewer-'+state.doc.revision+'"';if(request.headers.get('If-None-Match')===etag)return reply(304,null,{ETag:etag});return reply(200,{...SM.publicState(state.doc.data),revision:state.doc.revision},{ETag:etag});}catch{return reply(503,{error:'UNAVAILABLE'});}
+ try{const db=env.SM_DB.withSession?env.SM_DB.withSession('first-primary'):env.SM_DB;const head=await db.prepare('SELECT revision FROM sm_head WHERE id = 1').first();if(!head)return reply(404,{error:'VIEWER_DISABLED'});let cached=viewerMemo.get(env.SM_DB);if(!cached||cached.revision!==head.revision){const state=await load(db);cached={revision:state.doc.revision,enabled:!!state.doc.data.audience?.enabled,body:null};if(cached.enabled)cached.body=JSON.stringify({...SM.publicState(state.doc.data),revision:state.doc.revision});viewerMemo.set(env.SM_DB,cached);}if(!cached.enabled)return reply(404,{error:'VIEWER_DISABLED'});const etag='"viewer-'+cached.revision+'"';if(request.headers.get('If-None-Match')===etag)return reply(304,null,{ETag:etag});return new Response(cached.body,{status:200,headers:{...headers,ETag:etag}});}catch{return reply(503,{error:'UNAVAILABLE'});}
  }
  if(!env.SM_DB||!env.SM_KEY||env.SM_KEY.length<16)return reply(503,{error:'NOT_CONFIGURED',message:'Set the SM_DB D1 binding, run schema.sql and add a 16+ character SM_KEY secret in Cloudflare.'});
  if(!await authorised(request,env.SM_KEY))return reply(401,{error:'UNAUTHORIZED'});
@@ -45,14 +47,16 @@ export async function handleAPI(request,env){
  }
  if(request.method!=='POST')return reply(405,{error:'METHOD'});
  if(Number(request.headers.get('Content-Length')||0)>30000000)return reply(413,{error:'TOO_LARGE'});
- const raw=await request.text();if(new TextEncoder().encode(raw).length>30000000)return reply(413,{error:'TOO_LARGE'});const body=JSON.parse(raw);
+ const raw=await bodyText(request);const body=JSON.parse(raw);
  if(endpoint==='init'){
- SM.validate(body.doc?.data);if(!Array.isArray(body.doc.log)||!Array.isArray(body.doc.undo)||!Array.isArray(body.doc.redo)||!Number.isSafeInteger(body.doc.revision))throw Error('INVALID_DATA');
+ SM.validateDocument(body.doc);
  if(!await store(db,body.doc,null))return reply(409,{error:'EXISTS'});return reply(200,{doc:body.doc});
  }
  if(endpoint==='op'){
+ if(!body.competitionId)return reply(409,{error:'UPDATE_REQUIRED'});
  if(typeof body.actor!=='string'||body.actor.length>100||typeof body.label!=='string'||body.label.length>500||typeof body.at!=='string'||typeof body.id!=='string'||body.id.length>150)throw Error('INVALID_OPERATION');
  const op={...body,receivedAt:new Date().toISOString()};
+ SM.validateOperation(op);
  // CAS covers the entire snapshot. Independent rows are rebased and retried;
  // a changed value at the same path is a referee-visible conflict.
  for(let retry=0;retry<5;retry++){
