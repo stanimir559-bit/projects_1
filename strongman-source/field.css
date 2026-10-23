@@ -31,3 +31,26 @@ body[data-screen=scoring] .eventtabs button{display:flex;flex-direction:column;a
 @media print{.standings-matrix-wrap{display:block}.standings-compact{display:none}.standings-compact.always-compact{display:block}.standings-matrix td.standings-total,.standings-summary-row>.points{color:#000!important}.standings-person{break-inside:avoid}.standings-person summary{display:none}.standings-matrix th,.standings-matrix td{font-size:9pt;padding:7px}.standings-matrix .standings-total{background:#eee!important}}
 
 .overview-heading-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;flex-shrink:0}.overview-heading-actions .badge{white-space:nowrap}.overview-heading-actions button{min-height:46px;white-space:nowrap;border-color:var(--orange);color:var(--orange)}.desk-heading>div:first-child{min-width:0}.desk-heading h1{overflow-wrap:anywhere}.new-competition-tool{grid-column:1/-1;color:var(--orange);border-color:var(--orange)}@media(max-width:700px){body[data-screen=overview] .desk-heading{align-items:flex-start;flex-direction:column}.overview-heading-actions{width:100%;justify-content:space-between;gap:10px}.overview-heading-actions button{margin-left:auto;font-size:.85rem;padding:12px}.overview-heading-actions .badge{font-size:.72rem}}
+
+/* Persistent navigation: desktop header, compact tablet menu, phone footer. */
+:root{--app-header-height:134px;--storage-banner-height:0px}
+html{scroll-padding-top:calc(var(--storage-banner-height) + var(--app-header-height) + 16px)}
+.app-header{position:sticky;top:var(--storage-banner-height);z-index:30;background:var(--white);border-bottom:1px solid var(--line);box-shadow:0 3px 12px #0000000a}
+.app-header .topbar{border-bottom:0}.header-nav-shell{max-width:1280px;margin:auto;padding:0 24px 10px}.header-nav-shell:empty{display:none}
+.app-header .nav{max-width:none;width:100%;margin:0;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:3px;padding:4px;overflow:visible}.app-header .nav button{min-width:0;padding:10px 6px;font-size:.82rem;min-height:46px}.app-header .nav-secondary{display:flex}
+.sticky{top:calc(var(--storage-banner-height) + var(--app-header-height) + 16px)}
+#main,#main h1,.section{scroll-margin-top:16px}
+.app-header .visitor-tabs{border:0;margin:0;padding:0;gap:8px}.app-header .visitor-tabs button{min-height:46px}.app-header .visitor-tabs button[data-view]{min-width:140px}.tv-page .app-header{display:none}
+@media(max-width:1000px){.app-header .nav{grid-template-columns:repeat(4,minmax(0,1fr));max-width:650px}.app-header .nav-secondary{display:none}.app-header .nav .compact-active{background:var(--white);color:var(--ink);box-shadow:0 2px 5px #0001}}
+@media(max-width:560px){
+ html{scroll-padding-top:calc(var(--storage-banner-height) + 84px);scroll-padding-bottom:145px}
+ .app-header{position:static;border:0;box-shadow:none}.header-nav-shell{padding:0;max-width:none}
+ .app-header .nav{position:fixed;top:auto;bottom:0;left:0;right:0;width:100%;max-width:none;padding:7px 5px max(7px,env(safe-area-inset-bottom));border-top:1px solid var(--line);border-radius:0;background:var(--white);z-index:30;box-shadow:0 -3px 12px #0000000a}
+ .app-header .nav button{font-size:.69rem;padding:6px 2px;min-height:54px}.app-header .nav .compact-active{background:var(--surface-alt);color:var(--orange);box-shadow:none}
+ .app-header .visitor-tabs{position:fixed;bottom:0;left:0;right:0;z-index:30;display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) repeat(3,44px);gap:5px;padding:8px 10px max(8px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--white);box-shadow:0 -3px 12px #0000000a}
+ .app-header .visitor-tabs:not(:has([data-view=season])){grid-template-columns:minmax(0,1fr) repeat(3,44px)}.app-header .visitor-tabs button[data-view]{min-width:0}.visitor{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+ .field-context{top:var(--storage-banner-height)}#main,#main h1,.section{scroll-margin-top:16px}
+ .savebar,.review-actions{bottom:calc(80px + env(safe-area-inset-bottom))}
+ .tv-page .visitor{padding-bottom:40px}
+}
+@media print{html{scroll-padding:0}.app-header{display:none!important}.sticky{position:static}#main,#main h1,.section{scroll-margin-top:0}}

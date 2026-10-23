@@ -84,7 +84,7 @@ async function pump(){if(!sync||busy||net==='conflict'||readOnlyTab||!storageRea
 document.addEventListener('click',async ev=>{const b=ev.target.closest('[data-act]');if(!b||b.disabled)return;const act=b.dataset.act,id=b.dataset.id;try{
  if(await uxAction(act,b))return;
  if(await seasonAction(act,id))return;
- if(act==='nav'){if(view==='setup')captureSetupDraft();captureDraft();if(b.dataset.view==='standings')standingsThrough=-1;view=b.dataset.view;persist();render();window.scrollTo(0,0);}
+ if(act==='nav'){$('#dialog').close();if(view==='setup')captureSetupDraft();captureDraft();if(b.dataset.view==='standings')standingsThrough=-1;view=b.dataset.view;persist();render();window.scrollTo(0,0);}
  else if(act==='checkpoint'){openStandings(Number(b.dataset.through));}else if(act==='resumeEvent'){view='scoring';eventIndex=Number(b.dataset.index);athleteId=d().athletes[0]?.id;persist();render();window.scrollTo(0,0);}else if(['setup','goScoring','standings'].includes(act)){if(act==='standings')standingsThrough=-1;view=act==='goScoring'?'scoring':act;persist();render();}
  else if(act==='language'){captureDraft();captureSetupDraft();lang=lang==='bg'?'en':'bg';localStorage.setItem('sm-lang',lang);$('#dialog').close();render();applySetupDraft();}
  else if(act==='saveSetup'){if(saveSetup())toast(t('saved'));}

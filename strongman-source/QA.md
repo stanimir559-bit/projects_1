@@ -30,3 +30,5 @@ Event review follow-up (2.1.1): the UI suite now has 24 scenarios, including the
 2.1.3: 28 DOM scenarios; added new-competition visibility/localization, cancellation, JSON backup contents, preserved season archive/publication, reload, Undo and pending-sync checks. Browser verified the overview action at 390px and the More confirmation using isolated test data.
 
 2.1.4: 31 DOM, 23 core and 12 audit checks, plus seasonal/server/Worker suites. Added explicit degree units, total angles above 360°, ties/zero/invalid units, catalogue/setup choice, public projection, visitor EN/BG formatting, reload, Word XML and legacy backed-up correction with Undo. Real browser at 390px: entered 810°, saved to event review, verified shared first place (2.5 points each), no horizontal page overflow.
+
+2.1.5: 32 DOM scenarios. Header navigation retains drafts; repeated spectator refresh/tab/language/TV renders never duplicate menus; disabled publication clears spectator controls. Browser checks at desktop, 768, 390 and 320px verified fixed navigation, footer/save separation, English/Bulgarian labels and no horizontal page overflow. Shared scoring rules/backend unchanged.
