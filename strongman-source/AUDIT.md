@@ -1,5 +1,9 @@
 # Strongman Arena audit
 
+## Field Edition 2.1 follow-up
+
+The 23 October follow-up adds the documented field interface without changing scoring rules or backend schema. 20 DOM scenarios and 23 contrast pairs now pass, alongside the original core/season/server/Worker suites. See [FIELD-EDITION.md](FIELD-EDITION.md). The verification limits below remain in force.
+
 Audit date: 23 October 2026. Scope: data model, scoring, event catalog/source applicability, season aggregation, browser storage, referee and visitor workflows, synchronization, public API boundaries, exports and responsive appearance.
 
 This is the implementing agent's engineering audit. It is not an independent security certification, sports-federation approval, WCAG certification or a completed live-event field trial.

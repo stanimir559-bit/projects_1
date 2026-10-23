@@ -1,5 +1,9 @@
 # Verification record
 
+## Field Edition 2.1
+
+Run the same commands below. The UI suite now contains 20 scenarios, including saved-result acknowledgements, direct event results, TV pagination/pause, partial standings and public disable. The contrast suite covers 23 principal pairs. Real browser testing used an isolated shared fixture; no production scoring data was changed. See [FIELD-EDITION.md](FIELD-EDITION.md).
+
 21 October 2026
 
 - 19 scoring/core tests passed, including finishers/non-finishers, tied places, zero policies, series timing, medley progression, heavy/light priorities, penalties, measurement precision, height countback, overall tiebreaks, fixed field size, undo/redo and concurrent edits.

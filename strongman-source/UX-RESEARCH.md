@@ -1,5 +1,9 @@
 # UX research and feature decisions
 
+## Lovable design follow-up
+
+An isolated Lovable prototype explored a compact sports console with warm ivory/navy themes, prominent athlete identity, a focused measurement field, saved-result receipts and a public venue display. Useful presentation patterns were implemented in plain HTML/CSS/JS; existing core scoring and seasonal rules remain authoritative. See [FIELD-EDITION.md](FIELD-EDITION.md).
+
 Reviewed 23 October 2026. The primary objective is field scoring and easy public tracking, with frequent actions within one or two taps. This is a research-informed redesign, not a moderated usability study.
 
 Competition Corner's official score-entry guide uses expected/entered counts, a Missing Scores filter and nearby leaderboard access. Iron Podium's Strongman guide uses event tabs, score restoration and organizer-controlled ordering. These support refining the existing scoring workflow rather than adding another parallel entry system.

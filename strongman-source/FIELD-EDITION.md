@@ -1,0 +1,26 @@
+# Field Edition 2.1 — 23 October 2026
+
+This release integrates the useful interaction patterns from a separate Lovable design prototype into the existing dependency-free Strongman Arena app. The prototype uses sample data and is not the authoritative competition record. Production continues to use core.js and the existing Cloudflare Worker/D1 setup. No scoring rules, backend schema, secret or audience setting changed.
+
+## Referee
+- Compact overview: next useful action, live top-three preview, correct progress totals, event programme, backup and connection shortcuts.
+- Four labelled navigation icons, fixed at the bottom on phones.
+- Prominent current athlete and bib; roster changes in a native disclosure. The next missing athlete still advances automatically after Save → next.
+- Larger measurement inputs, finish/DNF quick selection, optional notes/penalties, and Undo last change next to Save.
+- Saved-result receipt identifies the previous athlete and measurement; device/server acknowledgement updates without replacing the next athlete's typed input.
+- Sticky current-event label on phones, and explicit Update wording when correcting a saved result.
+
+## Spectators
+- Compact warm light and navy dark themes; existing device preference retained.
+- Search and archive filters share one mobile row. Core action targets are at least 44px; no horizontal page overflow at the checked 390px and 320px widths (horizontal event/table rails remain intentionally scrollable).
+- One-tap overall/event selector with saved-result counts and complete/in-progress/upcoming labels. Athlete profiles remain one tap away.
+- Compact top-three cards use actual core ranks and only athletes with positive totals; provisional labels remain explicit.
+- Venue TV button displays unfiltered, correctly ranked results, live/offline status and Escape/Exit. More than six entrants automatically cycle across pages every 12s; Pause and Next remain available. A direct viewer URL can include ?tv=1 (or &tv=1 with other parameters).
+- TV uses the public viewer API and stops showing results when publication is disabled. It never includes a judge access code.
+
+## Validation
+- 20 software DOM integration scenarios; 21 core tests; 12 audit regressions; seasonal assertions; Node HTTP integration; Cloudflare handler SQL-adapter tests; 23 principal text contrast pairs >=4.5:1.
+- Real browser interaction with an isolated test session: save/next, live spectator update, athlete/event selection, theme/language, TV entry/exit and mobile layout. Production checks are read-only.
+- No physical iOS/Android field test, authenticated production mutation or native Word print-layout verification was performed in this release. Earlier audit limitations still apply (AUDIT.md).
+
+Lovable design workspace: https://lovable.dev/projects/1a69c402-ad0c-4f3c-8680-3b8d2fe178cd
