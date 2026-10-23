@@ -1,6 +1,6 @@
 # Strongman Arena
 
-Field Edition 2.1 is the current interface. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
+Field Edition 2.1.1 is the current interface. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
 
 Самостоятелно приложение на български и английски за точкуване на стронгмен състезания, публични резултати и годишен сезон.
 

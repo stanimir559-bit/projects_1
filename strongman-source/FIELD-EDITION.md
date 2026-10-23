@@ -24,3 +24,7 @@ This release integrates the useful interaction patterns from a separate Lovable 
 - No physical iOS/Android field test, authenticated production mutation or native Word print-layout verification was performed in this release. Earlier audit limitations still apply (AUDIT.md).
 
 Lovable design workspace: https://lovable.dev/projects/1a69c402-ad0c-4f3c-8680-3b8d2fe178cd
+
+## 2.1.1 — review each event before advancing
+
+The final missing athlete uses Save → overview. Once all results are saved, the scoring continuation button opens the event overview without a duplicate save. The overview lists athlete performances, event places and points, with row-based correction. Continue opens provisional overall standings through that event only, followed by the next event. On the last event, finishing remains an explicit action after the review. Corrections validate before navigation; both review views survive refresh. Missing results after Undo block advancement. 24 DOM scenarios and 21 core checks pass; browser QA uses a six-athlete, four-event fixture.
