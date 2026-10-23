@@ -1,6 +1,6 @@
 # Strongman Arena
 
-Field Edition 2.1.5 is the current interface. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
+Arena 3.0.0 is the current interface. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
 
 Самостоятелно приложение на български и английски за точкуване на стронгмен състезания, публични резултати и годишен сезон.
 
