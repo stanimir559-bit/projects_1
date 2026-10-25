@@ -27,10 +27,69 @@
 @media(max-width:1100px){.execGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:740px){.executive{padding:17px}.executive h3{font-size:20px}.execMetric{padding:12px}.execMetric strong{font-size:22px}}
 @media(max-width:360px){.execGrid{grid-template-columns:1fr}}
+
+/* Fixed-on-scroll, accessible document-wide navigation */
+html{scroll-padding-top:0}
+.shell{display:block;max-width:1260px;padding:0 26px}
+.main{width:100%;min-width:0}
+.sidebar,.mobileTop{display:none!important}
+section{scroll-margin-top:138px}
+.stickyHead{position:sticky;top:0;z-index:200;background:rgba(252,253,250,.97);border-bottom:1px solid #dce6dc;box-shadow:0 5px 25px rgba(22,60,41,.11);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.stickyTop,.stickyNavRow{max-width:1260px;margin:0 auto;display:flex;align-items:center;gap:18px;padding-left:26px;padding-right:26px}
+.stickyTop{height:62px}
+.stickyBrand{white-space:nowrap;font-size:22px;font-weight:900;letter-spacing:-1.1px;text-decoration:none;color:#182c23}
+.stickyBrand span{color:#2f8b64}
+.stickyContext{display:flex;min-width:0;flex:1;gap:3px;flex-direction:column;padding-left:20px;border-left:1px solid #dce6df}
+.stickyContext span{color:#718176;font-size:10px;font-weight:800;letter-spacing:1.15px}
+.stickyContext strong{color:#265841;font-weight:800;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stickyActions{display:flex;gap:8px}
+.stickyActions a{white-space:nowrap;padding:7px 12px;border-radius:9px;text-decoration:none;font-weight:800;font-size:12px;color:#235c45;background:#ebf3ec;border:1px solid #dce9dd}
+.stickyActions a:hover,.stickyActions a:focus-visible{background:#d7eadd}
+.stickyNavRow{gap:8px;height:49px}
+#topnav{min-width:0;display:flex;flex:1;gap:5px;align-items:center;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;padding:3px 0 5px}
+#topnav::-webkit-scrollbar{display:none}
+#topnav a{flex:0 0 auto;white-space:nowrap;color:#53665a;text-decoration:none;font-size:12px;line-height:1.15;font-weight:700;padding:9px 11px;border-radius:9px;border:1px solid transparent;transition:background .15s ease,color .15s ease}
+#topnav a:hover{background:#eff5ef;color:#205a41}
+#topnav a.active{color:#fff;background:#246d52;box-shadow:0 2px 8px #14513727}
+#topnav a:focus-visible,.navScroll:focus-visible,.stickyBrand:focus-visible{outline:2px solid #267557;outline-offset:2px}
+.navScroll{flex:0 0 33px;height:33px;display:grid;place-items:center;font-size:25px;line-height:1;padding:0 0 4px;border:1px solid #d9e5db;border-radius:9px;background:#f4f8f3;color:#24563f;cursor:pointer}
+.navScroll:hover{background:#e5efe7}
+.scrollProgress{height:3px;background:#e5efe7}
+.scrollProgress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#2d926a,#b3a25a);transition:width .09s linear}
+@media(max-width:740px){
+ html{scroll-padding-top:0}
+ .shell{padding:0 12px}
+ section{scroll-margin-top:124px}
+ .stickyTop,.stickyNavRow{padding-left:12px;padding-right:12px}
+ .stickyTop{height:57px;gap:10px}
+ .stickyBrand{font-size:19px}
+ .stickyContext{padding-left:10px}
+ .stickyContext span{font-size:9px;letter-spacing:.5px}
+ .stickyContext strong{font-size:12px}
+ .stickyActions{display:none}
+ .stickyNavRow{height:48px;gap:4px}
+ #topnav a{font-size:12px;padding:9px 10px}
+ .navScroll{flex-basis:27px;height:32px;border-radius:8px}
+}
+@media(max-width:360px){.stickyBrand{font-size:17px}.stickyContext span{font-size:8px}.stickyContext strong{font-size:11px}}
+@media(prefers-reduced-motion:reduce){html,#topnav{scroll-behavior:auto}#topnav a,.scrollProgress span{transition:none}}
+@media print{.stickyHead{display:none!important}.shell{padding:0;max-width:none}section{scroll-margin-top:0}}
 </style>
 </head>
-<body><div class="shell"><aside class="sidebar"><div class="brand">denny<em>licious.</em></div><div class="sideLabel">Стратегически доклад · BG</div><nav id="sidenav"><a href="#overview">01 · Най-важното</a><a href="#margin">01А · Марж и цена</a><a href="#decision">02 · Може ли в Капана?</a><a href="#law">03 · Разрешителни и режим</a><a href="#food">04 · Хигиена и безопасност</a><a href="#label">05 · Етикети и продукти</a><a href="#operations">06 · Работа и доставки</a><a href="#setup">07 · Фирма и данъци</a><a href="#investment">08 · Начална инвестиция</a><a href="#calculator">09 · Финансов калкулатор</a><a href="#strategy">10 · Продажби и стратегия</a><a href="#forecast">11 · Прогноза за 12 месеца</a><a href="#roadmap">12 · План за 90 дни</a><a href="#templates">13 · Готови шаблони</a><a href="#sources">14 · Закони и източници</a></nav><div class="sideFooter">Проучване: 25 октомври 2026 г.<br>Само България · всички суми в EUR<br>Офлайн интерактивен HTML</div></aside>
-<div class="main"><div class="mobileTop"><div class="brand">denny<em>licious.</em></div><select onchange="location.hash=this.value" aria-label="Изберете секция"><option value="#overview">Секции на доклада</option><option value="#margin">Марж и цена</option><option value="#decision">Може ли в Капана?</option><option value="#law">Разрешителни</option><option value="#food">Хигиена</option><option value="#label">Етикети</option><option value="#operations">Логистика</option><option value="#setup">Данъци и фирма</option><option value="#investment">Инвестиция</option><option value="#calculator">Калкулатор</option><option value="#strategy">Стратегия</option><option value="#forecast">12 месеца</option><option value="#roadmap">90 дни</option><option value="#templates">Шаблони</option><option value="#sources">Източници</option></select></div>
+<body><header class="stickyHead" id="stickyHead" aria-label="Основна навигация">
+<div class="stickyTop">
+ <a class="stickyBrand" href="#overview" aria-label="Dennylicious — към началото">denny<span>licious.</span></a>
+ <div class="stickyContext"><span>БИЗНЕС ПЛАН · БЪЛГАРИЯ</span><strong id="currentChapter">01 · Най-важното</strong></div>
+ <div class="stickyActions"><a href="#margin">€ Марж и цена</a><a href="#calculator">▦ Калкулатор</a></div>
+</div>
+<div class="stickyNavRow">
+ <button class="navScroll" id="navPrev" type="button" aria-label="Предишни секции" title="Предишни секции">‹</button>
+ <nav id="topnav" aria-label="Секции на доклада"><a href="#overview" data-label="01 · Най-важното" class="active" aria-current="location">01 · Най-важното</a><a href="#margin" data-label="01А · Марж и цена">01А · Марж и цена</a><a href="#decision" data-label="02 · Може ли в Капана?">02 · Може ли в Капана?</a><a href="#law" data-label="03 · Разрешителни и режим">03 · Разрешителни и режим</a><a href="#food" data-label="04 · Хигиена и безопасност">04 · Хигиена и безопасност</a><a href="#label" data-label="05 · Етикети и продукти">05 · Етикети и продукти</a><a href="#operations" data-label="06 · Работа и доставки">06 · Работа и доставки</a><a href="#setup" data-label="07 · Фирма и данъци">07 · Фирма и данъци</a><a href="#investment" data-label="08 · Начална инвестиция">08 · Начална инвестиция</a><a href="#calculator" data-label="09 · Финансов калкулатор">09 · Финансов калкулатор</a><a href="#strategy" data-label="10 · Продажби и стратегия">10 · Продажби и стратегия</a><a href="#forecast" data-label="11 · Прогноза за 12 месеца">11 · Прогноза за 12 месеца</a><a href="#roadmap" data-label="12 · План за 90 дни">12 · План за 90 дни</a><a href="#templates" data-label="13 · Готови шаблони">13 · Готови шаблони</a><a href="#sources" data-label="14 · Закони и източници">14 · Закони и източници</a></nav>
+ <button class="navScroll" id="navNext" type="button" aria-label="Следващи секции" title="Следващи секции">›</button>
+</div>
+<div class="scrollProgress" aria-hidden="true"><span id="pageProgress"></span></div>
+</header><div class="shell">
+<div class="main">
 <header class="hero"><small>DENNYLICIOUS · ПЛОВДИВ · БИЗНЕС РАЗШИРЯВАНЕ</small><h1>От Капана<br>до рафтовете.</h1><p>Правна пътна карта и реалистичен бизнес план за продажба на охладени протеинови чаши, рапове и десерти в други магазини в България.</p><div class="tags"><span>Български закони</span><span>БАБХ и безопасност</span><span>Инвестиция €1–3 хил.</span><span>Интерактивни сценарии</span></div></header>
 <div class="topTools"><button class="btn" onclick="window.print()">🖨️ Печат / PDF</button><button class="btn dark" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">↗ Отвори калкулатора</button><button class="btn" onclick="document.getElementById('margin').scrollIntoView({behavior:'smooth'})">€ Какъв марж е нужен?</button></div>
 <section id="overview"><div class="sectionTitle"><div class="num">01</div><div><h2>Резюме: какво бих направил</h2><p class="sub">Кратък отговор, преди да навлизаме в подробности.</p></div></div>
@@ -198,5 +257,38 @@ drawChart(arr);renderForecast()}
 function drawChart(arr){const svg=document.getElementById('bars');const W=870,H=235,L=70,R=22,T=12,B=32;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);const max=Math.max(1,...arr.map(x=>Math.max(x.revenue,x.incremental)));const inner=H-T-B;let s='';for(let i=0;i<5;i++){const val=max*(i/4),y=T+inner-inner*i/4;s+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#e6ede5"/><text x="${L-9}" y="${y+4}" text-anchor="end" fill="#69776d" font-size="11">${integer(val)}</text>`}const group=(W-R-L)/arr.length;arr.forEach((a,i)=>{const x=L+i*group+15,w=Math.max(7,(group-30)/2);const h1=a.revenue/max*inner,h2=Math.abs(a.incremental)/max*inner;const x2=x+w+4;s+=`<rect x="${x}" y="${T+inner-h1}" width="${w}" height="${h1}" rx="3" fill="#237252"/><rect x="${x2}" y="${T+inner-(a.incremental>0?h2:0)}" width="${w}" height="${h2}" rx="3" fill="${a.incremental>=0?'#d1a34a':'#b34c42'}" opacity=".95"/><text x="${L+(i+.5)*group}" y="${H-10}" text-anchor="middle" font-size="12" fill="#41564a">${a.count}</text>`});svg.innerHTML=s}
 function copyContent(id){const value=document.getElementById(id).innerText;navigator.clipboard?.writeText(value).then(()=>alert('Текстът е копиран.')).catch(()=>fallbackCopy(value))||fallbackCopy(value)}function fallbackCopy(t){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
 function initChecklists(){const boxes=[...document.querySelectorAll('.checkItem input')];boxes.forEach((c,i)=>{c.addEventListener('change',()=>{c.parentNode.classList.toggle('done',c.checked);const plan=[...document.querySelectorAll('#planchecks input')];document.getElementById('progress').textContent='План: '+plan.filter(x=>x.checked).length+' / '+plan.length+' изпълнени задачи. (Отметките не се запазват след затваряне на файла.)'})})}initChecklists();recalc();
-const navLinks=[...document.querySelectorAll('#sidenav a')];if('IntersectionObserver' in window){const obs=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting){navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+e.target.id))}}},{rootMargin:'-12% 0px -75% 0px'});document.querySelectorAll('section[id]').forEach(x=>obs.observe(x))}
+// Sticky navigation: active section, horizontally scrollable tabs and read progress.
+const topNav=document.getElementById('topnav');
+const navLinks=[...topNav.querySelectorAll('a[href^="#"]')];
+const chapters=[...document.querySelectorAll('section[id]')];
+const sticky=document.getElementById('stickyHead');
+const currentChapter=document.getElementById('currentChapter');
+let activeChapter='';
+function updateDocumentNav(){
+ const threshold=sticky.getBoundingClientRect().bottom+28;
+ let chosen=chapters[0];
+ for(const chapter of chapters){if(chapter.getBoundingClientRect().top<=threshold)chosen=chapter;else break;}
+ if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-7)chosen=chapters[chapters.length-1];
+ if(chosen && chosen.id!==activeChapter){
+  activeChapter=chosen.id;
+  navLinks.forEach(a=>{const selected=a.getAttribute('href')==='#'+activeChapter;a.classList.toggle('active',selected);if(selected)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+  const selected=navLinks.find(a=>a.getAttribute('href')==='#'+activeChapter);
+  if(selected){currentChapter.textContent=selected.dataset.label||selected.textContent;
+   const start=selected.offsetLeft-topNav.offsetLeft;
+   const end=start+selected.offsetWidth;
+   if(start<topNav.scrollLeft+10||end>topNav.scrollLeft+topNav.clientWidth-10){topNav.scrollTo({left:Math.max(0,start-topNav.clientWidth/3),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+  }
+ }
+ const scrollable=document.documentElement.scrollHeight-window.innerHeight;
+ document.getElementById('pageProgress').style.width=(scrollable>0?Math.min(100,Math.max(0,window.scrollY/scrollable*100)):100)+'%';
+}
+let navFrame=false;
+function requestDocumentNav(){if(!navFrame){navFrame=true;requestAnimationFrame(()=>{navFrame=false;updateDocumentNav();});}}
+window.addEventListener('scroll',requestDocumentNav,{passive:true});
+window.addEventListener('resize',requestDocumentNav);
+window.addEventListener('hashchange',requestDocumentNav);
+document.getElementById('navPrev').addEventListener('click',()=>topNav.scrollBy({left:-Math.round(topNav.clientWidth*.75),behavior:'smooth'}));
+document.getElementById('navNext').addEventListener('click',()=>topNav.scrollBy({left:Math.round(topNav.clientWidth*.75),behavior:'smooth'}));
+navLinks.forEach(a=>a.addEventListener('click',()=>{currentChapter.textContent=a.dataset.label||a.textContent;}));
+updateDocumentNav();
 </script></body></html>
