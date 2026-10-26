@@ -56,3 +56,7 @@ Every referee section now names the current task above the competition. Programm
 ## 3.2.0 — color makes the current task visible
 
 Navy navigation and filled section headings now identify the screen: blue scoring/event results, purple overall standings, teal programme, amber setup and orange season. The same color follows active menus, work panels and primary actions. Total points have a distinct tinted region beside the achievement. Green confirms saved/completed work; amber marks an in-progress event. Light/dark modes retain clear labels and the compact entry fields. No scoring rules or persistence changes.
+
+## 3.3.0 — one-button interactive demo
+
+Demo is a persistent navigation action, also available in the phone footer. A bilingual 28-step walkthrough uses the actual application UI with fictional records in an opaque sandbox and memory-only storage. Auto-play, pause, previous/next, stage selection, restart and exit are available. Shared sessions and outages are simulated; no production data or credentials are copied. Real sample exports are prepared on demand and downloaded through a visible DEMO-prefixed link. The walkthrough is self-contained in the HTML. See [DEMO.md](DEMO.md).

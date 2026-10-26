@@ -1,6 +1,6 @@
 # Strongman Arena
 
-Arena 3.2.0 is the current interface, with task-specific colors for scoring, standings, programme and season in both themes. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
+Arena 3.3.0 is the current interface, with task-specific colors for scoring, standings, programme and season in both themes. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
 
 Самостоятелно приложение на български и английски за точкуване на стронгмен състезания, публични резултати и годишен сезон.
 
@@ -47,3 +47,7 @@ Cloudflare: [cloudflare/DEPLOY-BG.md](cloudflare/DEPLOY-BG.md). По желан�
 След публикуване обновете всички съдийски устройства. Стара отворена версия трябва да се обнови преди нови общи записи. D1 схема, SM_DB и SM_KEY не се променят. Новият шаблон Titan's Turntable използва съдийски места вместо да предполага метри; съществуващите организаторски настройки не се сменят автоматично.
 
 Подробности: [UX-RESEARCH.md](UX-RESEARCH.md) и [AUDIT.md](AUDIT.md). Допълнителни проверки: node test-audit.cjs, node test-contrast.cjs. За софтуерните DOM тестове инсталирайте разработващите зависимости с npm install --prefix qa/harness и изпълнете node qa/test-ui.cjs. В хранилището изпълнявайте от strongman-source. Тези тестови зависимости не са включени в приложението и HTML страниците остават без външни библиотеки.
+
+## Демо
+
+Бутонът „Демо“ в менюто отваря 28 интерактивни стъпки с примерни данни. Има автоматично преминаване, пауза, предишна/следваща стъпка и директен избор. Можеш да пробваш реалните контроли; всяка следваща стъпка зарежда подготвен пример. Изходът връща основното състезание без промени по него. Word/CSV/JSON се изтеглят през видим линк с префикс DEMO. Връзката и прекъсването на интернет са симулации. Демото е вградено в HTML и не използва реалния сървър. Подробности: [DEMO.md](DEMO.md).
