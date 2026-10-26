@@ -25,3 +25,7 @@
 - Word export content (including degrees) remains covered by DOM/XML regression; native Word print rendering was not revalidated. Physical iOS/Android keyboard/sunlight/venue testing and a moderated usability study remain outside this audit.
 
 Browser proofs are retained locally under qa/clarity-scoring-mobile.png, qa/clarity-spectator-mobile.png and qa/clarity-profile-320-dark-en.png. Test data is fictional.
+
+## 3.3.1 — smaller measurement fields (2026-10-26)
+
+The time/distance/weight measurement entry is now capped at 240 px, with a 44 px input (46 px including the border) and 1.4rem digits. The same compact width applies on phones. Browser checks at desktop, 390 px and 320 px confirmed the dimensions and no horizontal overflow. Entering 1:02.37 and saving advanced to the next athlete and displayed 62.37 seconds. Scoring, validation and stored results are unchanged.

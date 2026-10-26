@@ -1,4 +1,4 @@
-const CACHE='strongman-arena-shell-v3-3-0';
+const CACHE='strongman-arena-shell-v3-3-1';
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.add('./strongman-arena.html')).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('strongman-arena-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{const url=new URL(event.request.url),base=new URL('./',self.location.href).pathname;if(event.request.method!=='GET'||url.origin!==self.location.origin||!url.pathname.startsWith(base)||!/^strongman-arena(?:\.html)?\/?$/.test(url.pathname.slice(base.length))||event.request.mode!=='navigate')return;event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put('./strongman-arena.html',copy));}return response;}).catch(()=>caches.open(CACHE).then(cache=>cache.match('./strongman-arena.html'))));});
