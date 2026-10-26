@@ -1,1 +1,9 @@
-{"name":"strongman-audit-harness","private":true,"devDependencies":{"jsdom":"30.1.3","fake-indexeddb":"6.2.6"}}
+{
+  "name": "strongman-audit-harness",
+  "private": true,
+  "devDependencies": {
+    "jsdom": "30.1.3",
+    "fake-indexeddb": "6.2.6",
+    "playwright": "1.62.1"
+  }
+}

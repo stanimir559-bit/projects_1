@@ -106,7 +106,7 @@ body[data-screen=scoring] aside h2{padding:10px 12px;border-radius:6px;backgroun
  .resultinput details{border-top:1px solid var(--line);padding-top:5px}
  .athlete-picker>summary{color:var(--section-ink)}
  .saved-receipt{padding:12px 14px;border-radius:7px;border:1px solid var(--section-border);border-left:3px solid #15803d}
- .savebar,:root[data-theme=dark] .savebar{padding:12px 0;border-top-width:1px;box-shadow:0 -8px 14px -12px #0f244d40}
+ .savebar,:root[data-theme=dark] .savebar{padding:12px 0;border-top-width:1px;box-shadow:none}
  .savebar button{min-height:46px;font-size:.92rem}
  body[data-screen=scoring] aside h2{margin-top:0;margin-bottom:12px;font-size:1rem;padding:10px 12px}
  body[data-screen=scoring] aside .scorebox h2{background:#6d28d9}

@@ -1,6 +1,6 @@
 # Strongman Arena
 
-Arena 3.4.0 adds consistent work panels, a compact spectator heading, clearer ranks and totals, and an embedded app icon. It is the current interface, with task-specific colors for scoring, standings, programme and season in both themes. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
+Arena 3.4.1 adds consistent work panels, a compact spectator heading, clearer ranks and totals, and an embedded app icon. It is the current interface, with task-specific colors for scoring, standings, programme and season in both themes. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
 
 Самостоятелно приложение на български и английски за точкуване на стронгмен състезания, публични резултати и годишен сезон.
 
@@ -51,3 +51,5 @@ Cloudflare: [cloudflare/DEPLOY-BG.md](cloudflare/DEPLOY-BG.md). По желан�
 ## Демо
 
 Бутонът „Демо“ в менюто отваря 28 интерактивни стъпки с примерни данни. Има автоматично преминаване, пауза, предишна/следваща стъпка и директен избор. Можеш да пробваш реалните контроли; всяка следваща стъпка зарежда подготвен пример. Изходът връща основното състезание без промени по него. Word/CSV/JSON се изтеглят през видим линк с префикс DEMO. Връзката и прекъсването на интернет са симулации. Демото е вградено в HTML и не използва реалния сървър. Подробности: [DEMO.md](DEMO.md).
+
+The 3.4.1 audit fixes floating Save buttons and configuration draft recovery. See [AUDIT-2026-10-26.md](AUDIT-2026-10-26.md) for the full coverage and verification limits; [qa/BROWSER-TESTS.md](qa/BROWSER-TESTS.md) documents the reproducible real-browser regressions.
