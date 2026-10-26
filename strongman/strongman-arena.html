@@ -970,7 +970,7 @@ function build(SM){
  const first=SM.competitionSnapshot(finished.data);first.id='demo-round-1';first.title='DEMO · Кръг 1 / Round 1';first.date='2026-05-16';
  const second=SM.competitionSnapshot(finished.data);second.title='DEMO · Кръг 2 / Round 2';
  season.competitions=[first,second].map(data=>({id:data.id,data,entries:data.athletes.map((a,i)=>({athleteId:a.id,seasonId:'demo-profile'+i,status:'ranked'}))}));
- const annual=SM.clone(finished);annual.data.season=season;SM.validateDocument(annual);
+ const annual=SM.clone(finished);annual.data.title=second.title;annual.data.season=season;SM.validateDocument(annual);
  const champion=SM.clone(annual);champion.data.season.closed=true;SM.validateDocument(champion);
  const connected={url:'https://demo.invalid/strongman',key:'DEMO-ONLY-NOT-A-REAL-CODE',actor:'DEMO referee'};
  const queuedBase=SM.clone(started),op=SM.operation(queuedBase,[{path:['data','results','demo-truck','demo-a0'],next:r({time:42.37})}],'Offline demo score','DEMO referee'),queued=SM.apply(queuedBase,op);
