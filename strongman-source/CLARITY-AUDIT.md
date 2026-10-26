@@ -29,3 +29,7 @@ Browser proofs are retained locally under qa/clarity-scoring-mobile.png, qa/clar
 ## 3.3.1 — smaller measurement fields (2026-10-26)
 
 The time/distance/weight measurement entry is now capped at 240 px, with a 44 px input (46 px including the border) and 1.4rem digits. The same compact width applies on phones. Browser checks at desktop, 390 px and 320 px confirmed the dimensions and no horizontal overflow. Entering 1:02.37 and saving advanced to the next athlete and displayed 62.37 seconds. Scoring, validation and stored results are unchanged.
+
+## 3.4 — finished panels and earlier spectator results
+
+Scoring is separated from its sidebar using consistent surface panels; sidebar overall totals now use the existing purple standings color. Wider athlete typography and aligned row spacing improve scanning. The spectator heading uses two columns on desktop, reducing the first result's vertical position by 150 px in the same fictional fixture; mobile headings stack. Input boundaries meet 3:1 contrast in both themes, and keyboard focus remains explicit. Print styles, scoring rules, API and persisted records are unchanged. See DESIGN-SYSTEM.md for measured browser QA.
