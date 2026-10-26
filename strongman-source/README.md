@@ -1,6 +1,6 @@
 # Strongman Arena
 
-Arena 3.1.0 is the current interface. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
+Arena 3.2.0 is the current interface, with task-specific colors for scoring, standings, programme and season in both themes. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for compact inputs, explicit screen navigation and spectator result clarity. The Lovable scorebook redesign is documented in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md); the UI fonts are embedded for offline use. See [FIELD-EDITION.md](FIELD-EDITION.md) for referee shortcuts, one-tap event results, the public venue/TV mode and verification.
 
 Самостоятелно приложение на български и английски за точкуване на стронгмен състезания, публични резултати и годишен сезон.
 

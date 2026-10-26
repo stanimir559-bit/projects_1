@@ -52,3 +52,7 @@ A new visual direction was developed in the existing Lovable project (revision 9
 ## 3.1.0 — clear tasks and result scope
 
 Every referee section now names the current task above the competition. Programme is a dedicated screen with completion status and direct event actions. Measurement entry is 54 px on phones and 58 px on desktop, with the unit attached; desktop scoring has less duplicated context. Spectators switch explicitly between overall standings and event results. Total points and the athlete’s latest available programme-event performance are visible together; an athlete profile opens in one click. Mobile profiles use readable event cards rather than a narrow table. Favorites retain core ranking order. Event choice persists and is included in shared URLs. See [CLARITY-AUDIT.md](CLARITY-AUDIT.md) for findings and validation.
+
+## 3.2.0 — color makes the current task visible
+
+Navy navigation and filled section headings now identify the screen: blue scoring/event results, purple overall standings, teal programme, amber setup and orange season. The same color follows active menus, work panels and primary actions. Total points have a distinct tinted region beside the achievement. Green confirms saved/completed work; amber marks an in-progress event. Light/dark modes retain clear labels and the compact entry fields. No scoring rules or persistence changes.
