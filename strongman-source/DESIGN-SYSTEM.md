@@ -53,3 +53,7 @@ The spectator title and competition context share a compact two-column heading o
 Validation: 36 DOM integration scenarios, 28 bilingual demo stages, 59 semantic text pairs at 4.5:1 or better and both new input boundary pairs at 3:1 or better. Browser QA covered 390 px and 320 px widths, Bulgarian/English, light/dark, profile/back/event selection and an actual save-next action in a fictional local competition. The compact measurement remained 240 × 46 px. No production competition test writes.
 
 TV verification: six fictional athletes fit in the 1280 × 720 viewport after reducing row padding; the sixth row ended at y=691 px. TV retains its larger name and score typography and existing pagination.
+
+## 3.5 spectator backgrounds — 27 October 2026
+
+Standard preserves the existing page; Logo adds the supplied central event mark to a quiet charcoal canvas; Poster adds the full supplied image behind an overlay. Data surfaces stay opaque in both themes. The appearance control is available in the header and TV controls, with persistent device preference and shared-link support. See AUDIENCE-THEMES.md for asset provenance and measured QA.

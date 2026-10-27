@@ -5,10 +5,13 @@
  const labels={};
  const escDemo=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
  const literal=x=>JSON.stringify(x).replace(/</g,'\\u003c');
+ const imageAssets=new Map();
+ function embeddedImage(match,uri){if(!imageAssets.has(uri)){const bytes=Uint8Array.from(atob(uri.slice(uri.indexOf(',')+1)),char=>char.charCodeAt(0));imageAssets.set(uri,{property:'--sm-demo-image-'+imageAssets.size,bytes});}return 'var('+imageAssets.get(uri).property+')';}
  function bootstrap(config){
   document.documentElement.dataset.demoChild='true';const values=new Map(Object.entries(config.storage||{}));const memory={get length(){return values.size},key:i=>[...values.keys()][i]||null,getItem:k=>values.has(String(k))?values.get(String(k)):null,setItem:(k,v)=>values.set(String(k),String(v)),removeItem:k=>values.delete(String(k)),clear:()=>values.clear()};
   Object.defineProperty(window,'localStorage',{value:memory,configurable:false});Object.defineProperty(window,'sessionStorage',{value:memory,configurable:false});
   Object.defineProperty(window,'indexedDB',{value:undefined,configurable:false});
+  window.addEventListener('message',async function(e){if(e.source!==parent||!e.data?.smDemoImages||e.data.token!==config.token||!Array.isArray(e.data.images)||e.data.images.length>8)return;try{await Promise.all(e.data.images.map(async asset=>{if(!/^--sm-demo-image-\d+$/.test(asset.property)||!(asset.bytes instanceof Uint8Array)||asset.bytes.byteLength>5000000)throw Error('INVALID_IMAGE');const url=URL.createObjectURL(new Blob([asset.bytes],{type:'image/png'})),image=new Image();image.src=url;await image.decode();document.documentElement.style.setProperty(asset.property,'url("'+url+'")');}));parent.postMessage({smDemo:true,token:config.token,kind:'imagesReady'},'*');}catch{parent.postMessage({smDemo:true,token:config.token,kind:'error'},'*');}});
   let remote=config.remoteDoc;
   window.fetch=async function(input,options){options=options||{};if(config.offline)throw TypeError('DEMO_OFFLINE');const path=new URL(String(input),'https://demo.invalid').pathname;let result,status=200;
    if(path.endsWith('/api/viewer')){if(!remote.data.audience?.enabled){status=404;result={error:'VIEWER_DISABLED'};}else result=Object.assign(window.SM.publicState(remote.data),{revision:remote.revision});}
@@ -49,7 +52,7 @@
  function source(step){
   const language=document.documentElement.lang==='en'?'en':'bg',theme=document.documentElement.dataset.theme||'light',pref=Object.assign({competitionId:step.record.doc.data.id,pinned:[],roundId:'',through:-1,tab:'competition',athleteId:'',selectedEvent:''},step.visitor||{});
   const config={token,role:step.role,action:step.action,target:step.target,offline:!!step.offline,remoteDoc:step.remoteDoc||step.record.doc,storage:{'strongman-arena-v1':JSON.stringify(step.record),'sm-lang':language,'sm-visitor-lang':language,'sm-appearance-v1':theme,'sm-visitor-ui-v2':JSON.stringify(pref)}};
-  const styles=[...document.querySelectorAll('head style')].map(x=>x.textContent).join('\n');
+  const styles=[...document.querySelectorAll('head style')].map(x=>x.textContent).join('\n').replace(/url\(["']?(data:image\/png;base64,[A-Za-z0-9+/=]+)["']?\)/g,embeddedImage);
   const scripts=step.role==='visitor'?window.SMDemoAssets.viewer:[...document.querySelectorAll('script:not([data-demo-source])')].filter(s=>!s.src).map(s=>s.textContent.replace("if('serviceWorker' in navigator&&","if(false&&"));
   return '<!doctype html><html lang="'+language+'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; font-src data:; img-src data: blob:; connect-src \'none\'; form-action \'none\'; base-uri \'none\'"><title>DEMO</title><style>'+styles+'</style>'+script('('+bootstrap.toString()+')('+literal(config)+');')+'</head><body>'+(step.role==='visitor'?viewerSkeleton:skeleton)+scripts.map(script).join('')+script('('+bridge.toString()+')();')+'</body></html>';
  }
@@ -69,7 +72,7 @@
   watchdog=setTimeout(()=>{if(!modal||ready)return;playing=false;modal.querySelector('#demoStatus').textContent=pick('Примерът не се зареди. Избери друга стъпка или „Отначало“.','The sample did not load. Select another step or restart.');},10000);
  }
  function close(){
-  if(!modal)return;clearTimers();clearDownload();playing=false;const node=modal;modal=null;frame=null;steps=[];node.close();node.remove();returnFocus?.focus();
+  if(!modal)return;clearTimers();clearDownload();playing=false;const node=modal;modal=null;frame=null;steps=[];node.close();node.remove();imageAssets.clear();returnFocus?.focus();
  }
  function launch(trigger){
   if(modal)return;returnFocus=trigger||document.activeElement;steps=SMDemoData.build(SM);playing=!matchMedia('(prefers-reduced-motion: reduce)').matches;index=0;
@@ -86,7 +89,8 @@
  window.addEventListener('message',e=>{
   if(!modal||e.source!==frame.contentWindow||!e.data?.smDemo||e.data.token!==token)return;
   if(e.data.kind==='download'&&e.data.blob instanceof Blob&&e.data.blob.size<=30000000&&/^[a-zA-Z0-9_.-]+\.(docx|csv|json)$/.test(e.data.name||'')){clearDownload();playing=false;clearTimeout(timer);paint();downloadURL=URL.createObjectURL(e.data.blob);const a=document.createElement('a');a.href=downloadURL;a.download='DEMO-'+e.data.name;a.textContent=pick('↓ Изтегли демо файла','↓ Download demo file')+' · '+a.download;modal.querySelector('#demoFileSlot').appendChild(a);}
-  if(e.data.kind==='ready'){ready=true;clearTimeout(watchdog);paint();schedule();}
+  if(e.data.kind==='ready'&&imageAssets.size){frame.contentWindow.postMessage({smDemoImages:true,token,images:[...imageAssets.values()]},'*');}
+  if(e.data.kind==='imagesReady'||e.data.kind==='ready'&&!imageAssets.size){ready=true;clearTimeout(watchdog);paint();schedule();}
   if(e.data.kind==='interact'&&playing){playing=false;clearTimeout(timer);paint();}
   if(e.data.kind==='close')close();
   if(e.data.kind==='viewer'){playing=false;show(steps.findIndex(s=>s.id==='spectators'));}
