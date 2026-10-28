@@ -1,8 +1,8 @@
 # Strongman Arena — session handoff
 
-Updated 2026-10-28. Checkout: C:/Users/OpenClaw/Documents/Codex/strongman-work. Branch: codex/arena-audit-2026-10-28, based on d0be5911815889469a68c6fd31a0a020fb6f2b4f (GitHub main 3.5.0). On resume, run git status --short and git log -1 --oneline; do not assume any push or deployment occurred.
+Updated 2026-10-28. Checkout: C:/Users/OpenClaw/Documents/Codex/strongman-work. Branch: codex/arena-audit-2026-10-28. Production main is now 3.5.1. The GitHub plugin recreated the verified local trees as new commit objects, so local and remote commit SHAs differ; fetch remote main and compare tree SHAs before further work. On resume, run git status --short, git log -1 --oneline, and git ls-remote origin refs/heads/main.
 
-## Completed local 3.5.1 candidate
+## Completed 3.5.1 release
 
 - Fixed QA harness page paths for the actual repository layout. The initial qa/test-ui.cjs failure was ENOENT; the corrected command now passes.
 - Strengthened core history validation and Undo/Redo target semantics; generated cloudflare/scoring.mjs from core.js. A first backward-only patch was falsified by a valid root replacement plus nested score, then replaced with reverse-to-base and forward replay. Demo season fixtures now record their changes as operations.
@@ -17,12 +17,14 @@ Updated 2026-10-28. Checkout: C:/Users/OpenClaw/Documents/Codex/strongman-work. 
 
 From strongman-source/: node build.cjs; test.cjs 23 PASS; test-audit.cjs 16 PASS; test-season.cjs PASS; test-server.cjs PASS; cloudflare/test-worker.mjs PASS; test-demo.cjs 28 fixture stages PASS; test-contrast.cjs 59 pairs PASS; test-sw.cjs 2 PASS; qa/test-ui.cjs 47 PASS; qa/test-browser.cjs 34 PASS using installed Microsoft Edge on fictional loopback data. Repeated build produced identical SHA-256 for judge HTML, viewer HTML and scoring.mjs. git -c core.whitespace=cr-at-eol diff --check is clean. Independent rules reviewer checked 600 valid mixed operations and 1,500 operations on a 150-athlete/50-event synthetic fixture; independent TV review found branded-mobile overflow that was repaired; scoped accessibility review found no remaining concrete regression after repairs.
 
-Limits: no real Android/iOS/Messenger device, physical Word print, real Service Worker restart during update, private backup or production competition was tested. The history check detects internal inconsistencies, not a fully coherent forged archive without a trusted signature.
+Production release verification: approved SQL export of the two Strongman D1 tables was saved outside the repository, restored to in-memory SQLite with integrity ok, and its document passed the new history validator. The GitHub plugin uploaded blobs with matching Git SHAs, created three trees exactly matching local trees, and advanced main with an expected-head lease. Cloudflare's main build succeeded and deployed 100%; hosted judge/viewer HTML and sw.js matched local SHA-256 hashes. Hub, judge, viewer and public viewer API returned 200; the judge API without a code returned 401. No production test writes were made.
+
+Limits: no real Android/iOS/Messenger device, physical Word print, real Service Worker restart during update or production competition write was tested. The history check detects internal inconsistencies, not a fully coherent forged archive without a trusted signature.
 
 ## Next actions
 
-1. Inspect the exact staged diff and local commit, and confirm GitHub main still points to the expected base before any release action.
-2. Continue isolated multi-device sync and real-device checks, including Messenger/Android/iOS and large-history startup.
-3. Obtain explicit approval for any default-branch push, merge or Cloudflare deploy. The pasted user master prompt requires this even though local changes and commits are authorized. No production D1 schema or data changes are planned.
+1. Run a real-device read-only smoke check in Messenger, Android and iOS, especially branded TV at short viewport heights.
+2. Investigate large-history startup and isolated multi-device sync with fictional data; do not use live competition test writes.
+3. For any future release, fetch remote main, compare trees, make a new private backup, and obtain separate production approval.
 
-Exact resume instruction: "Resume Strongman Arena in C:/Users/OpenClaw/Documents/Codex/strongman-work, read strongman-source/AGENTS.md, RUNBOOK, ROADMAP, DECISIONS and this handoff, inspect git status and remote head, then continue the highest-evidence safe item. Do not push to main or deploy without explicit approval."
+Exact resume instruction: "Resume Strongman Arena in C:/Users/OpenClaw/Documents/Codex/strongman-work, read strongman-source/AGENTS.md, RUNBOOK, ROADMAP, DECISIONS and this handoff, inspect git status and fetch remote main, compare trees rather than commit SHAs, then continue the highest-evidence safe item. Obtain fresh approval for any further production data access or deployment."
