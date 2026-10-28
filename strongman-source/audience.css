@@ -48,6 +48,12 @@
  html[data-audience-background]:not([data-audience-background=standard]) .visitor .viewer-heading .audience-logo{width:130px}
  html[data-audience-background]:not([data-audience-background=standard]) .viewer-heading-context{grid-column:1/-1}
 }
+@media screen and (min-width:561px) and (max-width:850px){
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading{grid-template-columns:80px minmax(0,1fr);gap:10px;padding:10px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .audience-logo{width:80px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading h1{font-size:1.4rem}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .tv-controls{grid-column:1/-1;justify-content:flex-end}
+}
 @media screen and (max-width:560px){
  .app-header .topactions .audience-background-button{width:38px;min-width:38px;min-height:44px;padding:8px}
  .audience-button-label{display:none}
@@ -63,8 +69,24 @@
  html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .audience-logo{width:80px}
  html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading h1{font-size:1.3rem}
  html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .tv-controls{grid-column:1/-1;justify-content:flex-end}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading{gap:6px;padding:8px;margin-bottom:8px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-controls{gap:5px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-controls button{padding:8px;font-size:.82rem}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-pagenum{padding:4px 8px}
  .audience-background-dialog .inner{padding:16px}
  .audience-background-option{grid-template-columns:62px minmax(0,1fr) 18px;gap:10px}
 }
 @media screen and (max-width:360px){.app-header:has([data-audience-open]) .brand{font-size:1.08rem!important}.app-header:has([data-audience-open]) .brand-wordmark>span{margin-left:3px}.app-header:has([data-audience-open]) .topbar{padding-left:12px;padding-right:12px}.app-header:has([data-audience-open]) .topactions button{padding-left:7px;padding-right:7px}}
+@media screen and (max-height:400px){
+ .tv-page .visitor{padding:4px 8px 4px}
+ .tv-page .tv-heading{margin-bottom:4px}
+ .tv-page .tv-heading h1{font-size:1.1rem;line-height:1.05}
+ .tv-page .tv-heading .eyebrow{display:none}
+ .tv-page .tv-pagenum{margin:2px 0}
+ .tv-page .leaderboard-person{padding-top:5px;padding-bottom:5px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading{grid-template-columns:minmax(0,1fr);gap:4px;padding:4px;margin-bottom:4px}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading h1{font-size:1.1rem}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .audience-logo{display:none}
+ html[data-audience-background]:not([data-audience-background=standard]) .tv-page .tv-heading .tv-controls{grid-column:1/-1}
+}
 @media print{.audience-background-button,.audience-logo,.audience-background-dialog{display:none!important}body:before{display:none!important}}
