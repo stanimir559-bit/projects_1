@@ -9,7 +9,7 @@ Updated 2026-10-28. Production main is 3.5.0; this local topic branch is an unre
 | SM-03 | QA harness looked for generated HTML inside strongman-source instead of ../strongman; observed ENOENT. | Implemented; DOM/browser suites run from real checkout. | 20 = 4×1×5 / 1×1 |
 | SM-04 | Spectator re-render lost keyboard focus, including hidden desktop duplicate at 320px, TV Esc and season round links. | Implemented; DOM and Edge regressions. | 3 = 4×1×3 / 2×2 |
 | SM-05 | Hidden spectator tab polled every 2.5 s; connection clocks repeated as live regions; mobile status was hidden from the accessibility tree. | Implemented; visibility, mutation and 320px computed-style tests. Actual traffic effect unknown. | 6 = 3×1×4 / 2×1 |
-| SM-06 | Twelve-athlete season TV renders 12 rows without paging in a read-only fixture. | Open: measure actual viewport overflow before designing pagination. | 0.8 estimate |
+| SM-06 | Fifteen-athlete season TV overflowed a 1280×720 and 320×740 viewport. | Implemented: compact paged season standings, manual/automatic paging and short-viewport spacing; real Edge tests cover all 15 athletes, long names and a long title down to 320×568. | 0.8 estimate |
 | SM-07 | Judge shell aria labels remained English in Bulgarian mode (build.cjs). | Implemented locally; BG/EN judge and spectator DOM regression. | 8.1 estimate |
 | SM-08 | Real-device Messenger/Android/iOS and large-history startup remain unverified. | Open investigation with fictional isolated data; no live writes. | Unscored |
 

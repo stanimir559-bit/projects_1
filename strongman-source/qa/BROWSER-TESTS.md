@@ -18,7 +18,7 @@ On a machine with an existing supported Chromium browser, set `SM_BROWSER_EXECUT
 
 The suite checks real CSS layout and scrolling at 320×568, 390×700, 390×844, 768×1024 and 1280×720; configuration draft recovery; all ten scoring forms; the complete competition/review/finalization flow; undo/redo; Word, CSV and JSON downloads; archive recovery; all 28 demo stages; service-worker offline reload; two isolated referee sessions and queued replay; spectator profiles/event selection/TV; and stored-markup escaping.
 
-The 3.5.1 candidate adds spectator keyboard focus checks for live result updates, mobile event rows, filter and overall controls, athlete profiles, TV enter/exit and Escape; mobile connection status accessibility; and `node test-sw.cjs` for cache-write event lifetime. The DOM and browser harnesses read the generated pages from `../strongman/`, matching the repository build output.
+The 3.5.1 candidate adds spectator keyboard focus checks for live result updates, mobile event rows, filter and overall controls, athlete profiles, TV enter/exit and Escape; mobile connection status accessibility; and `node test-sw.cjs` for cache-write event lifetime. Season TV is tested with 15 long-name athletes and a long title at 1280×720, 320×740 and 320×568 for no scroll, all pages, automatic/manual paging, pause, translation, dark theme, final status and read-only behavior. The DOM and browser harnesses read the generated pages from `../strongman/`, matching the repository build output.
 
 The local HTTP synchronization adapter uses the real scoring/operation core. Run `node test-server.cjs` and `node cloudflare/test-worker.mjs` separately to verify the actual backend implementations, authorization and SQL/CAS paths.
 

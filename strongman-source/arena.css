@@ -41,3 +41,4 @@ body[data-screen=scoring] .layout>div>.card{background:transparent;padding:0}bod
 @media(max-width:560px){.visitor-toolbar:has(#allAthletes) .field{display:none}.visitor-toolbar:has(#allAthletes) #allAthletes{flex:1;min-width:0;font-size:.85rem;padding:10px 8px}.visitor:has(.athlete-profile-section) .hero h1{font-size:1.8rem}.visitor:has(.athlete-profile-section) .event-overview{display:none}}
 
 h1,h2,h3{overflow-wrap:anywhere}
+@media(max-height:650px){.tv-page .visitor{padding-bottom:8px}.tv-page .visitor #content>.notice:not(.error){margin-bottom:0}.tv-page .tv-pagenum{margin-top:4px}.tv-page .leaderboard-person{padding-top:10px;padding-bottom:10px}}
