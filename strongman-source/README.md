@@ -55,3 +55,7 @@ Cloudflare: [cloudflare/DEPLOY-BG.md](cloudflare/DEPLOY-BG.md). По желан�
 The 3.5.0 audit fixes floating Save buttons and configuration draft recovery. See [AUDIT-2026-10-26.md](AUDIT-2026-10-26.md) for the full coverage and verification limits; [qa/BROWSER-TESTS.md](qa/BROWSER-TESTS.md) documents the reproducible real-browser regressions.
 
 Spectator backgrounds (3.5): use the picture button in the header or TV controls to choose Standard, Logo or Poster. Results retain opaque panels in both light and dark themes. The device remembers the choice, and shared links carry it. See [AUDIENCE-THEMES.md](AUDIENCE-THEMES.md).
+
+## Unreleased 3.5.1 maintenance branch
+
+The `codex/arena-audit-2026-10-28` branch strengthens backup/history validation, completes offline cache writes, pauses spectator polling in hidden tabs, and keeps keyboard focus during live spectator updates. The visible connection clock is no longer a repeating screen-reader announcement; connection changes remain announced on phones. The GitHub `main` branch and live Cloudflare app remain at 3.5.0 until a separate release approval. Run `node test-sw.cjs` with the other tests. See [agent-ops/ROADMAP.md](agent-ops/ROADMAP.md) and [agent-ops/SESSION-HANDOFF.md](agent-ops/SESSION-HANDOFF.md).

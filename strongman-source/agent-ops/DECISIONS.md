@@ -1,0 +1,13 @@
+# Strongman Arena — engineering decisions
+
+## 2026-10-28 · local branch codex/arena-audit-2026-10-28
+
+- Created a separate Git checkout at C:/Users/OpenClaw/Documents/Codex/strongman-work. The pre-existing strongman-arena/strongman-source folder contained only guidance; GitHub strongman-source/ contains the modular application. No original workspace files were overwritten.
+- Verified GitHub main at d0be5911815889469a68c6fd31a0a020fb6f2b4f (3.5.0) before editing. No production competition, credentials, shared Worker configuration or unrelated projects were written.
+- Fixed the QA harness path after an observed ENOENT. The documented tests now read built pages in ../strongman/.
+- Bound the Service Worker refresh to event.waitUntil; failed cache writes do not replace a successful online response. The cache namespace becomes v3-5-1 on eventual release.
+- Skipped spectator polling in hidden tabs and refresh on return. The visible clock is not a live announcement; an accessible transition status remains on mobile. Preserved keyboard focus across spectator updates and TV/profile navigation. Independent reviewers found mobile duplicate-row, season-link and TV-Escape cases that were repaired and tested.
+- Strengthened history integrity without changing scoring rules. validateDocument derives a possible base, replays all operations with prev checks, and requires the replayed data to equal the snapshot. Undo/Redo must match the referenced original path and target value in both apply and backup validation. A first backward-only algorithm was rejected after a valid new-competition regression; replay fixes it. Demo season fixtures were changed to use legitimate logged operations.
+- This validation can reject backups with previously accepted invalid histories. Preserve an untouched JSON backup before any future production upgrade. No D1 schema migration is involved.
+- Localized shell accessibility labels for the judge and spectator in the generated initial HTML and on language changes. The first failing BG DOM assertion was repaired; no scoring or storage changed.
+- No push, merge or deployment without explicit approval required by the user-provided master prompt. The rollback for this unreleased branch is to keep production main at 3.5.0.

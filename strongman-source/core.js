@@ -15,7 +15,36 @@ function putCopy(o,path,value){if(!path.length)return clone(value);const [key,..
 function operation(doc,changes,label,actor='Judge',extra={}){return {id:uid(),at:new Date().toISOString(),actor:actor.slice(0,100),label,competitionId:doc.data.id,changes:changes.map(c=>({path:c.path,prev:clone(Object.hasOwn(c,'prev')?c.prev:get(doc,c.path)),next:clone(c.next)})),...extra};}
 const safeId=x=>typeof x==='string'&&/^[A-Za-z0-9_-]{1,150}$/.test(x)&&!['__proto__','constructor','prototype'].includes(x);
 function validateOperation(op){if(!op||!safeId(op.id)||typeof op.actor!=='string'||op.actor.length>100||typeof op.label!=='string'||op.label.length>500||typeof op.at!=='string'||!Number.isFinite(Date.parse(op.at))||!Array.isArray(op.changes)||!op.changes.length||op.changes.length>200||op.kind&&!['undo','redo'].includes(op.kind))throw Error('INVALID_OPERATION');for(const c of op.changes){if(!Array.isArray(c.path)||!c.path.length||c.path.length>8||c.path[0]!=='data'||c.path.some(p=>typeof p!=='string'||!p||['__proto__','constructor','prototype'].includes(p))||!Object.hasOwn(c,'prev')||!Object.hasOwn(c,'next'))throw Error('INVALID_PATH');}return true;}
-function validateDocument(doc){if(!doc||doc.schema!==1||!Array.isArray(doc.log)||!Array.isArray(doc.undo)||!Array.isArray(doc.redo)||!Number.isSafeInteger(doc.revision)||doc.revision<0||doc.revision!==doc.log.length)throw Error('INVALID_DOCUMENT');validate(doc.data);const ids=new Set(),undo=[],redo=[];for(const op of doc.log){validateOperation(op);if(ids.has(op.id))throw Error('INVALID_DOCUMENT');ids.add(op.id);if(op.kind==='undo'){if(!op.target||undo.at(-1)!==op.target)throw Error('INVALID_DOCUMENT');undo.pop();redo.push(op.target);}else if(op.kind==='redo'){if(!op.target||redo.at(-1)!==op.target)throw Error('INVALID_DOCUMENT');redo.pop();undo.push(op.target);}else{undo.push(op.id);redo.length=0;}}if(JSON.stringify(doc.undo)!==JSON.stringify(undo)||JSON.stringify(doc.redo)!==JSON.stringify(redo))throw Error('INVALID_DOCUMENT');return true;}
+function overlapping(changes){for(let i=0;i<changes.length;i++)for(let j=i+1;j<changes.length;j++){const a=changes[i].path,b=changes[j].path;if(a.slice(0,Math.min(a.length,b.length)).every((x,k)=>x===b[k]))return true;}return false;}
+function matchesHistoryAction(op,target){return Boolean(target&&!target.kind&&op.changes.length===target.changes.length&&op.changes.every((change,i)=>JSON.stringify(change.path)===JSON.stringify(target.changes[i].path)&&JSON.stringify(change.next)===JSON.stringify(op.kind==='undo'?target.changes[i].prev:target.changes[i].next)));}
+function validateDocument(doc){
+ if(!doc||doc.schema!==1||!Array.isArray(doc.log)||!Array.isArray(doc.undo)||!Array.isArray(doc.redo)||!Number.isSafeInteger(doc.revision)||doc.revision<0||doc.revision!==doc.log.length)throw Error('INVALID_DOCUMENT');
+ validate(doc.data);
+ const ids=new Map(),undo=[],redo=[];
+ for(const op of doc.log){
+  validateOperation(op);
+  if(ids.has(op.id)||overlapping(op.changes))throw Error('INVALID_DOCUMENT');
+  if(op.kind==='undo'){
+   if(!op.target||undo.at(-1)!==op.target||!matchesHistoryAction(op,ids.get(op.target)))throw Error('INVALID_DOCUMENT');
+   undo.pop();redo.push(op.target);
+  }else if(op.kind==='redo'){
+   if(!op.target||redo.at(-1)!==op.target||!matchesHistoryAction(op,ids.get(op.target)))throw Error('INVALID_DOCUMENT');
+   redo.pop();undo.push(op.target);
+  }else{undo.push(op.id);redo.length=0;}
+  ids.set(op.id,op);
+ }
+ if(JSON.stringify(doc.undo)!==JSON.stringify(undo)||JSON.stringify(doc.redo)!==JSON.stringify(redo))throw Error('INVALID_DOCUMENT');
+ // Rewind to a possible base, then replay with the same precondition checks as apply().
+ // Replaying avoids mistaking an auto-created empty parent for a corrupted snapshot.
+ const current={data:clone(doc.data)};
+ for(let i=doc.log.length-1;i>=0;i--)for(const change of doc.log[i].changes)put(current,change.path,change.prev);
+ for(const op of doc.log){
+  for(const change of op.changes)if(JSON.stringify(get(current,change.path))!==JSON.stringify(change.prev))throw Error('INVALID_DOCUMENT');
+  for(const change of op.changes)put(current,change.path,change.next);
+ }
+ if(JSON.stringify(current.data)!==JSON.stringify(doc.data))throw Error('INVALID_DOCUMENT');
+ return true;
+}
 
 function apply(doc,op){
  validateOperation(op);
@@ -23,8 +52,9 @@ function apply(doc,op){
  if(op.competitionId&&op.competitionId!==doc.data.id)throw Error('CONFLICT');
  if(op.kind==='undo'&&(!op.target||doc.undo.at(-1)!==op.target))throw Error('CONFLICT');
  if(op.kind==='redo'&&(!op.target||doc.redo.at(-1)!==op.target))throw Error('CONFLICT');
+ if(op.kind&&!matchesHistoryAction(op,doc.log.find(entry=>entry.id===op.target)))throw Error('CONFLICT');
  for(const c of op.changes){if(!Array.isArray(c.path)||c.path[0]!=='data'||c.path.some(p=>['__proto__','constructor','prototype'].includes(p)))throw Error('INVALID_PATH');if(JSON.stringify(get(doc,c.path))!==JSON.stringify(c.prev))throw Error('CONFLICT');}
- for(let i=0;i<op.changes.length;i++)for(let j=i+1;j<op.changes.length;j++){const a=op.changes[i].path,b=op.changes[j].path;if(a.slice(0,Math.min(a.length,b.length)).every((x,k)=>x===b[k]))throw Error('INVALID_PATH');}
+ if(overlapping(op.changes))throw Error('INVALID_PATH');
  const out={...doc,data:doc.data,log:doc.log.slice(),undo:doc.undo.slice(),redo:doc.redo.slice()};for(const c of op.changes)out.data=putCopy(out.data,c.path.slice(1),c.next);
  validate(out.data);
  out.log.push(clone(op));out.revision++;

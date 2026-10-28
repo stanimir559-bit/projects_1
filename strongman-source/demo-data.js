@@ -18,8 +18,8 @@ function build(SM){
  const first=SM.competitionSnapshot(finished.data);first.id='demo-round-1';first.title='DEMO · Кръг 1 / Round 1';first.date='2026-05-16';
  const second=SM.competitionSnapshot(finished.data);second.title='DEMO · Кръг 2 / Round 2';
  season.competitions=[first,second].map(data=>({id:data.id,data,entries:data.athletes.map((a,i)=>({athleteId:a.id,seasonId:'demo-profile'+i,status:'ranked'}))}));
- const annual=SM.clone(finished);annual.data.title=second.title;annual.data.season=season;SM.validateDocument(annual);
- const champion=SM.clone(annual);champion.data.season.closed=true;SM.validateDocument(champion);
+ const annual=SM.apply(finished,SM.operation(finished,[{path:['data','title'],next:second.title},{path:['data','season'],next:season}],'Add demo season','DEMO referee'));SM.validateDocument(annual);
+ const champion=SM.apply(annual,SM.operation(annual,[{path:['data','season','closed'],next:true}],'Finish demo season','DEMO referee'));SM.validateDocument(champion);
  const connected={url:'https://demo.invalid/strongman',key:'DEMO-ONLY-NOT-A-REAL-CODE',actor:'DEMO referee'};
  const queuedBase=SM.clone(started),op=SM.operation(queuedBase,[{path:['data','results','demo-truck','demo-a0'],next:r({time:42.37})}],'Offline demo score','DEMO referee'),queued=SM.apply(queuedBase,op);
  function record(doc,view,extra={}){return {doc:SM.clone(doc),view,queue:[],sync:null,drafts:{},eventIndex:0,athleteId:'demo-a0',standingsThrough:-1,...extra};}
